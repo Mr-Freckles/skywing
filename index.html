@@ -46,7 +46,6 @@
     input[type="range"] {
       accent-color: #38bdf8;
     }
-    /* Subtle filmic vignette for B-roll polish */
     #vignette {
       position: fixed;
       inset: 0;
@@ -113,7 +112,7 @@
   <!-- Cinema Settings Drawer -->
   <aside id="cinema-panel" class="hud-element fixed top-16 right-3 z-30 w-72 glass rounded-2xl p-4 hidden">
     <div class="flex items-center justify-between mb-3">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">B-Roll & Flight Settings</h2>
+      <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-300">B-Roll &amp; Flight Settings</h2>
       <button id="btn-close-settings" class="text-slate-400 hover:text-white text-sm leading-none px-1">&times;</button>
     </div>
     <div class="space-y-3 text-xs">
@@ -147,7 +146,7 @@
         <button id="btn-quality" class="px-2.5 py-1 rounded-lg bg-white/10 border border-white/15 text-slate-200 font-medium">High</button>
       </div>
       <div class="pt-2 border-t border-white/10 text-[11px] text-slate-400 leading-relaxed">
-        <strong>Controls:</strong> A/D roll &amp; barrel roll &bull; W/S pitch up/down &bull; Space flap &bull; F boost &bull; Shift/B air brake &bull; C camera &bull; P cruise &bull; H hide HUD.
+        <strong>Controls:</strong> A/D roll &amp; turn &bull; W/S pitch &amp; walk &bull; Space flap / 2x jump &bull; F boost &bull; Shift/B air-brake &bull; C camera &bull; P cruise &bull; H hide HUD.
       </div>
     </div>
   </aside>
@@ -160,13 +159,13 @@
       </div>
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">SkyWing</h1>
       <p class="text-sm text-slate-300 leading-relaxed mb-5">
-        Soar with animated wings through an endless procedural world of floating islands, waterfalls, stone arches, and cloud seas.
+        Soar through towering ridges, floating islands, thunderclouds, and high-altitude cloud seas—or land and walk on any surface.
       </p>
       <div class="grid grid-cols-2 gap-2 text-left text-xs text-slate-300 bg-slate-900/50 rounded-2xl p-3.5 mb-5 border border-white/10">
-        <div><strong class="text-white">A / D (or &larr;/&rarr;)</strong><br/>Roll &amp; Barrel Roll</div>
-        <div><strong class="text-white">W / S &bull; Space &bull; F</strong><br/>Pitch, Flap &amp; Boost</div>
-        <div><strong class="text-white">Shift / B Key</strong><br/>Air Brake (Landing)</div>
-        <div><strong class="text-white">H / C / P Keys</strong><br/>Hide HUD / Cam / Cruise</div>
+        <div><strong class="text-white">A / D &bull; W / S</strong><br/>Roll, Pitch &amp; Walk</div>
+        <div><strong class="text-white">Space &bull; F &bull; Shift</strong><br/>Flap, Boost &amp; Air-Brake</div>
+        <div><strong class="text-white">P / C Keys</strong><br/>Auto-Cruise / Camera</div>
+        <div><strong class="text-white">H Key</strong><br/>Clean B-Roll (Hide UI)</div>
       </div>
       <div class="flex flex-col sm:flex-row gap-2.5">
         <button id="btn-start-fly" class="flex-1 py-3 px-5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-sm transition shadow-lg shadow-sky-500/25">
@@ -179,16 +178,15 @@
     </div>
   </div>
 
-  <!-- On-Screen Touch / Quick Action Controls (mobile & mouse friendly) -->
+  <!-- On-Screen Touch / Quick Action Controls -->
   <div id="touch-controls" class="hud-element fixed bottom-4 left-4 right-4 z-20 flex items-end justify-between pointer-events-none sm:hidden">
     <div id="touch-pad" class="glass w-28 h-28 rounded-full pointer-events-auto flex items-center justify-center relative touch-none">
       <div id="touch-knob" class="w-10 h-10 rounded-full bg-sky-400/70 border border-white/60 shadow-lg"></div>
     </div>
     <div class="flex flex-col gap-2 pointer-events-auto">
       <button id="btn-touch-boost" class="glass px-4 py-2.5 rounded-2xl text-xs font-semibold text-amber-300 active:scale-95 transition">BOOST</button>
-      <button id="btn-touch-roll" class="glass px-4 py-2.5 rounded-2xl text-xs font-semibold text-emerald-300 active:scale-95 transition">ROLL</button>
       <button id="btn-touch-flap" class="glass px-4 py-3 rounded-2xl text-xs font-semibold text-sky-300 active:scale-95 transition">FLAP</button>
-      <button id="btn-touch-dive" class="glass px-4 py-2.5 rounded-2xl text-xs font-semibold text-amber-300 active:scale-95 transition">BRAKE</button>
+      <button id="btn-touch-brake" class="glass px-4 py-2.5 rounded-2xl text-xs font-semibold text-rose-300 active:scale-95 transition">BRAKE</button>
     </div>
   </div>
 
@@ -198,20 +196,18 @@
     <span class="text-white/25">&bull;</span>
     <span><strong class="text-white">W / S</strong> Pitch</span>
     <span class="text-white/25">&bull;</span>
-    <span><strong class="text-white">Space</strong> Flap</span>
+    <span><strong class="text-white">Space</strong> Flap / 2x Jump</span>
     <span class="text-white/25">&bull;</span>
     <span><strong class="text-white">F</strong> Boost</span>
     <span class="text-white/25">&bull;</span>
     <span><strong class="text-white">Shift / B</strong> Brake</span>
-    <span class="text-white/25">&bull;</span>
-    <span><strong class="text-white">P</strong> Auto-Cruise</span>
     <span class="text-white/25">&bull;</span>
     <span><strong class="text-white">H</strong> Hide HUD</span>
   </div>
 
   <script>
     // =========================================================================
-    // SkyWing: Procedural Floating Islands B-Roll Flight Game
+    // SkyWing: Procedural Floating Islands & Cloud Sea Flight Game
     // =========================================================================
 
     // --- Deterministic Seeded PRNG & 2D Value Noise ---
@@ -269,7 +265,7 @@
         grassColor: 0x6a994e,
         rockColor: 0x5c5346,
         crystalColor: 0xffb703,
-        cloudColor: 0xffe8d6,
+        cloudColor: 0xffffff,
         ringColor: 0xffd166,
         groundLow: 0xc2a878,
         groundMid: 0x588157,
@@ -309,7 +305,7 @@
         grassColor: 0x2d6a4f,
         rockColor: 0x343a40,
         crystalColor: 0x00f5d4,
-        cloudColor: 0xc77dff,
+        cloudColor: 0xf3e8ff,
         ringColor: 0x00f5d4,
         groundLow: 0x3c096c,
         groundMid: 0x1b4332,
@@ -329,7 +325,7 @@
         grassColor: 0x74c69d,
         rockColor: 0x6d597a,
         crystalColor: 0xff758f,
-        cloudColor: 0xfff1e6,
+        cloudColor: 0xffffff,
         ringColor: 0xffb5a7,
         groundLow: 0xe2c2b3,
         groundMid: 0x52b788,
@@ -343,40 +339,40 @@
     let sunLight, hemiLight, skyMesh, cloudSeaMesh;
     let worldSeed = Math.floor(Math.random() * 900000) + 100000;
     let themeIdx = 0;
-    let cameraMode = 0; // 0: Cinematic Follow, 1: Chase, 2: Orbit Drone, 3: Wing POV, 4: Low Hero
+    let cameraMode = 0;
     const CAMERA_MODES = ['Cinematic', 'Chase', 'Drone Orbit', 'Wing POV', 'Low Hero'];
     let isAutoPilot = false;
     let isStarted = false;
     let hudHidden = false;
     let isMuted = false;
     let highQuality = true;
-    let fogLevel = 1; // 0: Light, 1: Medium, 2: Thick
+    let fogLevel = 1;
     let speedMultiplier = 1.0;
     let baseFov = 68;
     let ringsCollected = 0;
 
     // Chunk Management
     const CHUNK_SIZE = 220;
-    const VIEW_RADIUS = 2; // 5x5 chunks around player
+    const VIEW_RADIUS = 2;
     const chunks = new Map();
     const activeRings = [];
-    const activeIslands = []; // For autopilot obstacle avoidance
-    const activeCaves = [];   // For clear fly-through cave clearance
+    const activeIslands = [];
+    const activeStorms = [];
 
-    // Shared Materials & Geometries (for smooth browser performance)
-    let matGrass, matRock, matTrunk, matLeaves, matCrystal, matWater, matCloud, matRing, matGround;
+    // Shared Materials & Geometries
+    let matGrass, matRock, matDirt, matTrunk, matLeaves, matCrystal, matWater, matCloud, matStormCloud, matRing, matGround;
     let geoBox, geoCone, geoOcta, geoRing, geoSphere;
 
-    const FLAP_COOLDOWN = 1.4; // seconds between wing flaps
+    const FLAP_COOLDOWN = 1.4;
 
-    // Player / Winged Flyer State
+    // Player / Winged Dove State
     const player = {
-      pos: new THREE.Vector3(0, 65, 0),
+      pos: new THREE.Vector3(0, 145, 0),
       quat: new THREE.Quaternion(),
       euler: new THREE.Euler(0, 0, 0, 'YXZ'),
       speed: 36,
       minSpeed: 10,
-      maxSpeed: 104,
+      maxSpeed: 76,
       pitch: 0,
       yaw: 0,
       roll: 0,
@@ -387,48 +383,50 @@
       flapPhase: 0,
       flapCooldownTimer: 0,
       boostEnergy: 1.0,
+      boostCooldownTimer: 0,
       isBoosting: false,
+      isBraking: false,
       isGrounded: false,
-      groundType: 'terrain',
-      isHopping: false,
-      hopVel: 0,
       isDazed: false,
       isFallingDazed: false,
+      dazedVel: new THREE.Vector3(),
       ledgeDropTimer: 0,
-      dazeTime: 0,
+      isHopping: false,
+      hopVelY: 0,
+      groundNormal: new THREE.Vector3(0, 1, 0),
       walkPhase: 0,
-      verticalVel: 0,
-      barrelRollDir: 0,
-      barrelRollProgress: 0,
+      dazeTime: 0,
+      landedIsland: null,
       group: null,
-      tailGroup: null,
-      dazeGroup: null,
       leftWing: null,
       rightWing: null,
       leftTip: null,
       rightTip: null,
-      leftLeg: null,
-      rightLeg: null,
+      foldedWings: null,
+      flightTail: null,
+      standTail: null,
+      feetGroup: null,
+      starsGroup: null,
       trailLeft: null,
       trailRight: null
     };
 
     // Camera Smooth State
     const camState = {
-      pos: new THREE.Vector3(0, 72, 20),
-      lookAt: new THREE.Vector3(0, 65, -20),
+      pos: new THREE.Vector3(0, 152, 20),
+      lookAt: new THREE.Vector3(0, 145, -20),
       laggedDir: new THREE.Vector3(0, 0, -1),
       orbitAngle: 0,
       standYawOffset: 0,
-      standPitchOffset: 0.28,
-      standOrbiting: false
+      standPitchOffset: 0.22,
+      standDist: 6.2
     };
 
     // Input State
     const keys = {};
-    let pointerSteer = { active: false, x: 0, y: 0, lastX: 0, lastY: 0 };
+    let pointerSteer = { active: false, x: 0, y: 0 };
     let touchSteer = { active: false, x: 0, y: 0 };
-    let touchDive = false;
+    let touchBrake = false;
     let touchFlapHeld = false;
     let touchBoostHeld = false;
 
@@ -469,9 +467,7 @@
         audio.windGain.connect(audio.ctx.destination);
         noise.start();
         audio.initialized = true;
-      } catch (e) {
-        // Ignore audio errors on restricted devices
-      }
+      } catch (e) {}
     }
 
     function playFlapSound() {
@@ -512,9 +508,27 @@
       } catch (e) {}
     }
 
+    function playThunderSound() {
+      if (isMuted || !audio.initialized || !audio.ctx) return;
+      try {
+        const now = audio.ctx.currentTime;
+        const osc = audio.ctx.createOscillator();
+        const gain = audio.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(95, now);
+        osc.frequency.exponentialRampToValueAtTime(28, now + 0.85);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+        osc.connect(gain);
+        gain.connect(audio.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.92);
+      } catch (e) {}
+    }
+
     // --- Sky Dome Shader ---
     function createSkyDome() {
-      const geo = new THREE.SphereGeometry(1600, 32, 24);
+      const geo = new THREE.SphereGeometry(1600, 24, 16);
       const mat = new THREE.ShaderMaterial({
         side: THREE.BackSide,
         depthWrite: false,
@@ -522,14 +536,13 @@
         uniforms: {
           topColor: { value: new THREE.Color(THEMES[themeIdx].skyTop) },
           midColor: { value: new THREE.Color(THEMES[themeIdx].skyMid) },
-          bottomColor: { value: new THREE.Color(THEMES[themeIdx].skyHorizon) },
-          fogColor: { value: new THREE.Color(THEMES[themeIdx].fogColor) }
+          bottomColor: { value: new THREE.Color(THEMES[themeIdx].skyHorizon) }
         },
         vertexShader: `
-          varying vec3 vDir;
+          varying vec3 vWorldPos;
           void main() {
-            vDir = normalize(position);
             vec4 wp = modelMatrix * vec4(position, 1.0);
+            vWorldPos = wp.xyz;
             gl_Position = projectionMatrix * viewMatrix * wp;
           }
         `,
@@ -537,16 +550,11 @@
           uniform vec3 topColor;
           uniform vec3 midColor;
           uniform vec3 bottomColor;
-          uniform vec3 fogColor;
-          varying vec3 vDir;
+          varying vec3 vWorldPos;
           void main() {
-            float h = vDir.y;
-            vec3 sky = mix(bottomColor, midColor, smoothstep(-0.08, 0.28, h));
-            sky = mix(sky, topColor, smoothstep(0.22, 0.85, h));
-            // Smoothly blend the horizon band into the scene fog color so there is never a hard edge above the clouds
-            float horizonBand = 1.0 - smoothstep(0.0, 0.16, abs(h));
-            vec3 col = mix(sky, fogColor, horizonBand * 0.88);
-            col = mix(col, fogColor, smoothstep(0.02, -0.22, h));
+            float h = normalize(vWorldPos).y;
+            vec3 col = mix(bottomColor, midColor, smoothstep(-0.35, 0.12, h));
+            col = mix(col, topColor, smoothstep(0.08, 0.78, h));
             gl_FragColor = vec4(col, 1.0);
           }
         `
@@ -559,8 +567,10 @@
     // --- Shared Materials & Geometries ---
     function initSharedAssets() {
       const t = THEMES[themeIdx];
-      matGrass = new THREE.MeshStandardMaterial({ color: t.grassColor, roughness: 0.85, flatShading: true });
-      matRock = new THREE.MeshStandardMaterial({ color: t.rockColor, roughness: 0.92, flatShading: true });
+      const dirtCol = new THREE.Color(t.groundHigh).lerp(new THREE.Color(0x5c4033), 0.45);
+      matGrass = new THREE.MeshStandardMaterial({ color: t.groundMid, roughness: 0.85, flatShading: true });
+      matRock = new THREE.MeshStandardMaterial({ color: t.groundHigh, roughness: 0.92, flatShading: true });
+      matDirt = new THREE.MeshStandardMaterial({ color: dirtCol, roughness: 0.9, flatShading: true });
       matTrunk = new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9, flatShading: true });
       matLeaves = new THREE.MeshStandardMaterial({ color: 0x2d6a4f, roughness: 0.8, flatShading: true });
       matCrystal = new THREE.MeshStandardMaterial({
@@ -580,14 +590,26 @@
       });
       matCloud = new THREE.MeshStandardMaterial({
         color: t.cloudColor,
-        emissive: t.cloudColor,
-        emissiveIntensity: 0.34,
+        emissive: 0xffffff,
+        emissiveIntensity: 0.48,
         vertexColors: true,
-        roughness: 0.98,
+        roughness: 0.88,
         transparent: true,
-        opacity: 0.72,
-        depthWrite: true,
+        opacity: 0.88,
         fog: false,
+        depthWrite: false,
+        flatShading: true
+      });
+      matStormCloud = new THREE.MeshStandardMaterial({
+        color: 0x64748b,
+        emissive: 0x334155,
+        emissiveIntensity: 0.3,
+        vertexColors: true,
+        roughness: 0.94,
+        transparent: true,
+        opacity: 0.92,
+        fog: false,
+        depthWrite: false,
         flatShading: true
       });
       matRing = new THREE.MeshStandardMaterial({
@@ -606,16 +628,19 @@
       geoCone = new THREE.ConeGeometry(1, 1, 6);
       geoOcta = new THREE.OctahedronGeometry(1, 0);
       geoRing = new THREE.TorusGeometry(6.5, 0.35, 8, 24);
-      geoSphere = new THREE.DodecahedronGeometry(1, 0);
-      // Brighten the underside of clouds so they look warm, sunlit and whiteish rather than dark storm clouds
+
+      // Cloud puff geometry with bright, whiteish underside vertex shading
+      geoSphere = new THREE.DodecahedronGeometry(1, 1);
       const cPos = geoSphere.attributes.position;
       const cCols = new Float32Array(cPos.count * 3);
       for (let i = 0; i < cPos.count; i++) {
-        const yNorm = THREE.MathUtils.clamp((-cPos.getY(i) + 1) * 0.5, 0, 1);
-        const shade = 0.98 + yNorm * 0.28; // Top ~0.98, underside ~1.26 (bright whiteish underside)
+        const y = cPos.getY(i);
+        const shade = y < 0
+          ? THREE.MathUtils.lerp(0.95, 1.0, THREE.MathUtils.clamp(y + 1, 0, 1))
+          : 1.0;
         cCols[i * 3] = shade;
         cCols[i * 3 + 1] = shade;
-        cCols[i * 3 + 2] = shade;
+        cCols[i * 3 + 2] = Math.min(1.0, shade + 0.015);
       }
       geoSphere.setAttribute('color', new THREE.BufferAttribute(cCols, 3));
     }
@@ -655,7 +680,7 @@
         g.add(eye);
       }
 
-      // Fanned dove tail (5 overlapping white feathers)
+      // Fanned dove tail for flight
       const tailGroup = new THREE.Group();
       tailGroup.position.set(0, 0.04, 0.58);
       for (let i = -2; i <= 2; i++) {
@@ -666,36 +691,36 @@
         tailGroup.add(tf);
       }
       g.add(tailGroup);
-      player.tailGroup = tailGroup;
+      player.flightTail = tailGroup;
 
-      // Dizzy spinning stars above the dove's head when bonking into a mountain
-      const dazeGroup = new THREE.Group();
-      dazeGroup.position.set(0, 0.52, -0.58);
-      const starMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
-      for (let s = 0; s < 5; s++) {
-        const ang = (s / 5) * Math.PI * 2;
-        const star = new THREE.Mesh(geoOcta, starMat);
-        star.scale.set(0.085, 0.085, 0.085);
-        star.position.set(Math.cos(ang) * 0.34, Math.sin(ang * 2) * 0.04, Math.sin(ang) * 0.34);
-        dazeGroup.add(star);
+      // Narrow, tapered folded tail for standing/walking
+      const standTailGroup = new THREE.Group();
+      standTailGroup.position.set(0, 0.01, 0.54);
+      const centerTail = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.035, 0.76), whiteMat);
+      centerTail.position.set(0, 0, 0.34);
+      centerTail.rotation.x = -0.14;
+      standTailGroup.add(centerTail);
+      for (const side of [-1, 1]) {
+        const sideFeather = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.03, 0.68), pearlMat);
+        sideFeather.position.set(side * 0.045, -0.008, 0.3);
+        sideFeather.rotation.set(-0.15, side * 0.04, side * 0.12);
+        standTailGroup.add(sideFeather);
       }
-      dazeGroup.visible = false;
-      g.add(dazeGroup);
-      player.dazeGroup = dazeGroup;
+      standTailGroup.visible = false;
+      g.add(standTailGroup);
+      player.standTail = standTailGroup;
 
-      // Rounded, broad dove wings (high wing-to-body ratio)
+      // Rounded, broad dove wings
       function makeWing(side) {
         const wingPivot = new THREE.Group();
         wingPivot.position.set(side * 0.18, 0.06, -0.12);
 
-        // Soft rounded inner wing
         const innerGeo = new THREE.BoxGeometry(2.6, 0.075, 1.25);
         const inner = new THREE.Mesh(innerGeo, whiteMat);
         inner.position.set(side * 1.3, 0, 0.14);
         inner.rotation.y = side * -0.1;
         wingPivot.add(inner);
 
-        // Outer wing section
         const outerGroup = new THREE.Group();
         outerGroup.position.set(side * 2.55, 0, 0.28);
 
@@ -705,7 +730,6 @@
         outer.rotation.y = side * -0.22;
         outerGroup.add(outer);
 
-        // Rounded dove primary feathers (fanned)
         for (let i = 0; i < 5; i++) {
           const fLen = 1.15 - i * 0.12;
           const fGeo = new THREE.BoxGeometry(fLen, 0.03, 0.22);
@@ -724,50 +748,72 @@
       g.add(lw.pivot);
       g.add(rw.pivot);
 
-      // Petite dove legs & feet for walking when landed
-      function makeLeg(side) {
-        const legPivot = new THREE.Group();
-        legPivot.position.set(side * 0.13, -0.2, 0.04);
-        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.24, 0.04), beakMat);
-        leg.position.set(0, -0.11, 0);
-        const foot = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.03, 0.18), beakMat);
-        foot.position.set(0, -0.22, -0.04);
-        legPivot.add(leg, foot);
-        return legPivot;
-      }
-      const lLeg = makeLeg(-1);
-      const rLeg = makeLeg(1);
-      g.add(lLeg);
-      g.add(rLeg);
-
       player.group = g;
       player.leftWing = lw.pivot;
       player.rightWing = rw.pivot;
       player.leftTip = lw.outer;
       player.rightTip = rw.outer;
-      player.leftLeg = lLeg;
-      player.rightLeg = rLeg;
 
-      // Sculpted folded wings for a clean standing-dove silhouette when perched/walking
-      const foldedWingsGroup = new THREE.Group();
+      // Standing-dove folded wings nestled sleekly along the body when perched/walking
+      const foldedGroup = new THREE.Group();
       for (const side of [-1, 1]) {
-        const shell = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 6), whiteMat);
-        shell.scale.set(0.42, 0.88, 2.35);
-        shell.position.set(side * 0.25, 0.04, 0.14);
-        shell.rotation.y = side * -0.08;
-        shell.rotation.x = -0.1;
+        const wingSide = new THREE.Group();
+        const coverGeo = new THREE.SphereGeometry(0.24, 7, 5);
+        coverGeo.scale(0.32, 0.58, 2.35);
+        const cover = new THREE.Mesh(coverGeo, whiteMat);
+        cover.position.set(side * 0.25, 0.05, 0.06);
+        cover.rotation.set(-0.08, side * -0.08, side * -0.22);
+        wingSide.add(cover);
 
-        const tip = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.58, 5), pearlMat);
-        tip.rotation.x = Math.PI * 0.52;
-        tip.rotation.z = side * 0.14;
-        tip.position.set(side * 0.16, -0.05, 0.72);
-        foldedWingsGroup.add(shell, tip);
+        const tipGeo = new THREE.BoxGeometry(0.06, 0.11, 0.62);
+        const tip = new THREE.Mesh(tipGeo, pearlMat);
+        tip.position.set(side * 0.15, 0.02, 0.54);
+        tip.rotation.set(-0.14, side * 0.16, side * -0.15);
+        wingSide.add(tip);
+
+        foldedGroup.add(wingSide);
       }
-      foldedWingsGroup.visible = false;
-      g.add(foldedWingsGroup);
-      player.foldedWings = foldedWingsGroup;
+      foldedGroup.visible = false;
+      g.add(foldedGroup);
+      player.foldedWings = foldedGroup;
 
-      // Subtle wingtip contrail ribbons
+      // Petite amber feet for walking when landed
+      const feetGroup = new THREE.Group();
+      for (const side of [-1, 1]) {
+        const foot = new THREE.Group();
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.22, 0.04), beakMat);
+        leg.position.set(0, -0.24, 0);
+        const toes = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.03, 0.18), beakMat);
+        toes.position.set(0, -0.35, -0.04);
+        foot.add(leg, toes);
+        foot.position.set(side * 0.13, 0, -0.02);
+        feetGroup.add(foot);
+      }
+      feetGroup.visible = false;
+      g.add(feetGroup);
+      player.feetGroup = feetGroup;
+
+      // Dizzy stars orbiting head when crashing into steep hills
+      const starsGroup = new THREE.Group();
+      starsGroup.position.set(0, 0.62, -0.55);
+      const starMat = new THREE.MeshStandardMaterial({
+        color: 0xfef08a,
+        emissive: 0xfacc15,
+        emissiveIntensity: 0.9,
+        roughness: 0.2,
+        flatShading: true
+      });
+      for (let s = 0; s < 4; s++) {
+        const ang = (s / 4) * Math.PI * 2;
+        const starMesh = new THREE.Mesh(geoOcta, starMat);
+        starMesh.scale.setScalar(0.11);
+        starMesh.position.set(Math.cos(ang) * 0.38, 0, Math.sin(ang) * 0.38);
+        starsGroup.add(starMesh);
+      }
+      starsGroup.visible = false;
+      g.add(starsGroup);
+      player.starsGroup = starsGroup;
+
       player.trailLeft = createTrail();
       player.trailRight = createTrail();
       scene.add(player.trailLeft.line);
@@ -852,102 +898,398 @@
       windParticles.geometry.attributes.position.needsUpdate = true;
     }
 
-    // --- Ambient Flocks of Soaring Birds ---
-    const npcBirds = [];
+    // --- Ambient Soaring Bird Flocks ---
+    const ambientFlocks = [];
     function createAmbientFlocks() {
-      const flockMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.55, flatShading: true, side: THREE.DoubleSide });
-      const darkTipMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6, flatShading: true, side: THREE.DoubleSide });
-      const bodyGeo = new THREE.ConeGeometry(0.16, 0.9, 5);
-      bodyGeo.rotateX(Math.PI / 2);
-      const wingGeo = new THREE.BoxGeometry(1.15, 0.04, 0.42);
+      const whiteMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.55, flatShading: true });
+      const tipMat = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.6, flatShading: true });
 
       const flockCount = 7;
       for (let f = 0; f < flockCount; f++) {
-        const flockRadius = 28 + Math.random() * 45;
-        const flockY = 26 + (f / flockCount) * 125;
-        const flockSpeed = 12 + Math.random() * 9;
-        const turnDir = f % 2 === 0 ? 1 : -1;
-        const baseAngle = (f / flockCount) * Math.PI * 2;
-        const members = 4 + Math.floor(Math.random() * 4);
+        const ang = (f / flockCount) * Math.PI * 2;
+        const dist = 90 + (f % 3) * 85;
+        const flock = {
+          center: new THREE.Vector3(Math.cos(ang) * dist, 75 + (f % 4) * 32, Math.sin(ang) * dist),
+          orbitRadius: 36 + (f % 3) * 18,
+          orbitSpeed: (0.14 + (f % 3) * 0.04) * (f % 2 === 0 ? 1 : -1),
+          angle: f * 1.1,
+          altBase: 72 + (f % 4) * 30,
+          birds: []
+        };
 
-        for (let m = 0; m < members; m++) {
-          const bird = new THREE.Group();
-          const body = new THREE.Mesh(bodyGeo, flockMat);
-          bird.add(body);
+        const birdCount = 4 + (f % 4);
+        for (let b = 0; b < birdCount; b++) {
+          const bg = new THREE.Group();
+          const body = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.18, 0.85), whiteMat);
+          bg.add(body);
 
           const lw = new THREE.Group();
-          const lwMesh = new THREE.Mesh(wingGeo, m % 2 === 0 ? flockMat : darkTipMat);
-          lwMesh.position.set(-0.55, 0, 0.05);
-          lw.add(lwMesh);
-          bird.add(lw);
+          const lMesh = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.04, 0.34), tipMat);
+          lMesh.position.set(-0.58, 0, 0.04);
+          lw.add(lMesh);
+          bg.add(lw);
 
           const rw = new THREE.Group();
-          const rwMesh = new THREE.Mesh(wingGeo, m % 2 === 0 ? flockMat : darkTipMat);
-          rwMesh.position.set(0.55, 0, 0.05);
-          rw.add(rwMesh);
-          bird.add(rw);
+          const rMesh = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.04, 0.34), tipMat);
+          rMesh.position.set(0.58, 0, 0.04);
+          rw.add(rMesh);
+          bg.add(rw);
 
-          const scale = 0.72 + Math.random() * 0.38;
-          bird.scale.setScalar(scale);
-          scene.add(bird);
+          const scale = 0.65 + (b % 3) * 0.12;
+          bg.scale.setScalar(scale);
+          scene.add(bg);
 
-          npcBirds.push({
-            group: bird,
+          flock.birds.push({
+            mesh: bg,
             lw,
             rw,
-            flockIdx: f,
-            radius: flockRadius + (m - members * 0.5) * 3.8,
-            yOffset: (Math.random() - 0.5) * 6,
-            baseY: flockY,
-            angle: baseAngle - m * 0.075 * turnDir,
-            angularVel: (flockSpeed / flockRadius) * turnDir,
-            flapPhase: Math.random() * Math.PI * 2,
-            flapSpeed: 5.2 + Math.random() * 2.2,
-            centerX: player.pos.x + (Math.random() - 0.5) * 260,
-            centerZ: player.pos.z + (Math.random() - 0.5) * 260
+            offsetAngle: b * 0.28,
+            radialOffset: ((b % 3) - 1) * 5.5,
+            yOffset: ((b % 4) - 1.5) * 2.4,
+            flapOffset: b * 1.3
           });
         }
+        ambientFlocks.push(flock);
       }
     }
 
-    function updateAmbientFlocks(dt) {
-      for (let i = 0; i < npcBirds.length; i++) {
-        const b = npcBirds[i];
-        // Recycle flock circle smoothly ahead of the player if it falls far behind
-        const dx = b.centerX - player.pos.x;
-        const dz = b.centerZ - player.pos.z;
-        if (dx * dx + dz * dz > 340 * 340) {
-          const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-          const spreadAngle = Math.atan2(forward.x, forward.z) + (Math.random() - 0.5) * 1.6;
-          const dist = 170 + Math.random() * 130;
-          b.centerX = player.pos.x + Math.sin(spreadAngle) * dist;
-          b.centerZ = player.pos.z + Math.cos(spreadAngle) * dist;
+    function updateAmbientFlocks(dt, elapsed) {
+      for (const flock of ambientFlocks) {
+        const dx = flock.center.x - player.pos.x;
+        const dz = flock.center.z - player.pos.z;
+        if (dx * dx + dz * dz > 480 * 480) {
+          const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
+          const side = (Math.random() - 0.5) * 260;
+          flock.center.set(
+            player.pos.x + fwd.x * 260 - fwd.z * side,
+            flock.altBase,
+            player.pos.z + fwd.z * 260 + fwd.x * side
+          );
         }
 
-        b.angle += b.angularVel * dt;
-        b.flapPhase += b.flapSpeed * dt;
+        flock.angle += flock.orbitSpeed * dt;
+        for (const b of flock.birds) {
+          const a = flock.angle - b.offsetAngle;
+          const r = flock.orbitRadius + b.radialOffset;
+          const bx = flock.center.x + Math.cos(a) * r;
+          const bz = flock.center.z + Math.sin(a) * r;
+          const by = flock.center.y + b.yOffset + Math.sin(elapsed * 0.6 + b.flapOffset) * 2.2;
 
-        const bx = b.centerX + Math.cos(b.angle) * b.radius;
-        const bz = b.centerZ + Math.sin(b.angle) * b.radius;
-        const minTerrainY = Math.max(-15, getGroundHeight(bx, bz)) + 8;
-        const by = Math.max(minTerrainY, b.baseY + b.yOffset + Math.sin(b.angle * 2) * 3.5);
+          const dir = flock.orbitSpeed >= 0 ? 1 : -1;
+          const vx = -Math.sin(a) * dir;
+          const vz = Math.cos(a) * dir;
 
-        // Tangent heading along the circular flight path
-        const vx = -Math.sin(b.angle) * Math.sign(b.angularVel);
-        const vz = Math.cos(b.angle) * Math.sign(b.angularVel);
+          b.mesh.position.set(bx, by, bz);
+          b.mesh.rotation.set(0, Math.atan2(-vx, -vz), -dir * 0.24);
 
-        b.group.position.set(bx, by, bz);
-        b.group.rotation.set(0, Math.atan2(-vx, -vz), Math.sign(b.angularVel) * -0.28);
-
-        // Alternate rhythmic flapping with graceful soaring glides
-        const glideCycle = Math.sin(b.flapPhase * 0.22);
-        const flapAmt = glideCycle > -0.25 ? Math.sin(b.flapPhase) * 0.58 : 0.08;
-        b.lw.rotation.z = flapAmt;
-        b.rw.rotation.z = -flapAmt;
+          const cycle = (elapsed * 1.6 + b.flapOffset) % 6.283;
+          const flap = cycle < 3.6 ? Math.sin(cycle * 3.5) * 0.58 : 0.06;
+          b.lw.rotation.z = flap;
+          b.rw.rotation.z = -flap;
+        }
       }
     }
 
-    // --- Macro Biome Density (0 = Sparse Plains, 1 = Massive Dense Forest) with Smooth Fade ---
+    // --- Storm Rain & Lightning System ---
+    let rainParticles, lightningBoltMesh, lightningGlowMesh;
+    const stormState = {
+      timer: 2.2,
+      chargeTimer: 0,
+      chargePos: new THREE.Vector3(),
+      boltTimer: 0,
+      boltPos: new THREE.Vector3()
+    };
+
+    // Build jagged, multi-branched 3D lightning geometry (converging feeders + forked branches)
+    function rebuildJaggedLightningGeometries() {
+      const boltPositions = [];
+      const glowPositions = [];
+
+      function addThickSegment(arr, p1, p2, radius) {
+        const dir = new THREE.Vector3().subVectors(p2, p1);
+        const len = dir.length();
+        if (len < 0.001) return;
+        const up = new THREE.Vector3(0, 1, 0);
+        const quat = new THREE.Quaternion().setFromUnitVectors(up, dir.clone().normalize());
+        const sides = 4;
+        for (let s = 0; s < sides; s++) {
+          const a1 = (s / sides) * Math.PI * 2;
+          const a2 = ((s + 1) / sides) * Math.PI * 2;
+          const o1 = new THREE.Vector3(Math.cos(a1) * radius, 0, Math.sin(a1) * radius).applyQuaternion(quat);
+          const o2 = new THREE.Vector3(Math.cos(a2) * radius, 0, Math.sin(a2) * radius).applyQuaternion(quat);
+
+          const v1 = p1.clone().add(o1);
+          const v2 = p1.clone().add(o2);
+          const v3 = p2.clone().add(o1);
+          const v4 = p2.clone().add(o2);
+
+          arr.push(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, v3.x, v3.y, v3.z);
+          arr.push(v2.x, v2.y, v2.z, v4.x, v4.y, v4.z, v3.x, v3.y, v3.z);
+        }
+      }
+
+      // Main jagged trunk from +80 (cloud base) down to -80
+      const mainSteps = 18;
+      const mainPts = [];
+      let curX = (Math.random() - 0.5) * 4;
+      let curZ = (Math.random() - 0.5) * 4;
+      for (let i = 0; i <= mainSteps; i++) {
+        const t = i / mainSteps;
+        const y = 80 - t * 160;
+        if (i > 0 && i < mainSteps) {
+          curX += (Math.random() - 0.5) * 9.5;
+          curZ += (Math.random() - 0.5) * 9.5;
+        }
+        mainPts.push(new THREE.Vector3(curX, y, curZ));
+      }
+
+      for (let i = 0; i < mainSteps; i++) {
+        const t = i / mainSteps;
+        const r = THREE.MathUtils.lerp(0.75, 0.35, t);
+        addThickSegment(boltPositions, mainPts[i], mainPts[i + 1], r);
+        addThickSegment(glowPositions, mainPts[i], mainPts[i + 1], r * 2.6);
+      }
+
+      // 2 upper feeder bolts combining into the main trunk near the cloud base
+      for (let f = 0; f < 2; f++) {
+        const mergeIdx = 2 + Math.floor(Math.random() * 4);
+        const mergePt = mainPts[mergeIdx];
+        const feederSteps = 5;
+        let fx = mergePt.x + (Math.random() - 0.5) * 26;
+        let fz = mergePt.z + (Math.random() - 0.5) * 26;
+        let prev = new THREE.Vector3(fx, 82, fz);
+        for (let s = 1; s <= feederSteps; s++) {
+          const st = s / feederSteps;
+          const next = new THREE.Vector3(
+            THREE.MathUtils.lerp(fx, mergePt.x, st) + (s < feederSteps ? (Math.random() - 0.5) * 5.5 : 0),
+            THREE.MathUtils.lerp(82, mergePt.y, st),
+            THREE.MathUtils.lerp(fz, mergePt.z, st) + (s < feederSteps ? (Math.random() - 0.5) * 5.5 : 0)
+          );
+          addThickSegment(boltPositions, prev, next, 0.36);
+          addThickSegment(glowPositions, prev, next, 0.95);
+          prev = next;
+        }
+      }
+
+      // 4 jagged secondary branches forking outward down the bolt
+      for (let b = 0; b < 4; b++) {
+        const startIdx = 3 + Math.floor(Math.random() * (mainSteps - 6));
+        let prev = mainPts[startIdx].clone();
+        const bSteps = 4 + Math.floor(Math.random() * 4);
+        const dirX = (Math.random() - 0.5) * 8.5;
+        const dirZ = (Math.random() - 0.5) * 8.5;
+        for (let s = 1; s <= bSteps; s++) {
+          const next = new THREE.Vector3(
+            prev.x + dirX + (Math.random() - 0.5) * 5.2,
+            prev.y - (7 + Math.random() * 6),
+            prev.z + dirZ + (Math.random() - 0.5) * 5.2
+          );
+          const br = THREE.MathUtils.lerp(0.32, 0.1, s / bSteps);
+          addThickSegment(boltPositions, prev, next, br);
+          if (s <= 2) addThickSegment(glowPositions, prev, next, br * 2.2);
+          prev = next;
+        }
+      }
+
+      const boltGeo = new THREE.BufferGeometry();
+      boltGeo.setAttribute('position', new THREE.Float32BufferAttribute(boltPositions, 3));
+      boltGeo.computeVertexNormals();
+      lightningBoltMesh.geometry.dispose();
+      lightningBoltMesh.geometry = boltGeo;
+
+      const glowGeo = new THREE.BufferGeometry();
+      glowGeo.setAttribute('position', new THREE.Float32BufferAttribute(glowPositions, 3));
+      glowGeo.computeVertexNormals();
+      lightningGlowMesh.geometry.dispose();
+      lightningGlowMesh.geometry = glowGeo;
+    }
+
+    function createWeatherEffects() {
+      // Scattered 3D vertical raindrop streaks across the storm volume
+      const dropCount = 520;
+      const geo = new THREE.BufferGeometry();
+      const pos = new Float32Array(dropCount * 6);
+      for (let i = 0; i < dropCount; i++) {
+        const rx = (Math.random() - 0.5) * 160;
+        const ry = (Math.random() - 0.5) * 130;
+        const rz = (Math.random() - 0.5) * 160;
+        const streakLen = 2.6 + Math.random() * 2.2;
+        const base = i * 6;
+        pos[base] = rx;
+        pos[base + 1] = ry;
+        pos[base + 2] = rz;
+        pos[base + 3] = rx + 0.25;
+        pos[base + 4] = ry - streakLen;
+        pos[base + 5] = rz + 0.12;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      const mat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.72,
+        fog: false
+      });
+      rainParticles = new THREE.LineSegments(geo, mat);
+      rainParticles.visible = false;
+      rainParticles.frustumCulled = false;
+      scene.add(rainParticles);
+
+      lightningBoltMesh = new THREE.Mesh(
+        new THREE.BufferGeometry(),
+        new THREE.MeshBasicMaterial({
+          color: 0xfef9c3,
+          transparent: true,
+          opacity: 0.96,
+          side: THREE.DoubleSide,
+          fog: false
+        })
+      );
+      lightningBoltMesh.visible = false;
+      scene.add(lightningBoltMesh);
+
+      lightningGlowMesh = new THREE.Mesh(
+        new THREE.BufferGeometry(),
+        new THREE.MeshBasicMaterial({
+          color: 0x7dd3fc,
+          transparent: true,
+          opacity: 0.42,
+          side: THREE.DoubleSide,
+          fog: false
+        })
+      );
+      lightningGlowMesh.visible = false;
+      scene.add(lightningGlowMesh);
+
+      rebuildJaggedLightningGeometries();
+    }
+
+    function updateWeatherEffects(dt) {
+      if (!rainParticles) return;
+
+      let activeStorm = null;
+      let insideStormCloud = false;
+      for (const st of activeStorms) {
+        const hDist = Math.hypot(player.pos.x - st.x, player.pos.z - st.z);
+        if (hDist < st.r && player.pos.y <= st.y + 18) {
+          activeStorm = st;
+          if (Math.abs(player.pos.y - st.y) < 18) insideStormCloud = true;
+          break;
+        }
+      }
+
+      if (activeStorm) {
+        rainParticles.visible = true;
+        const pos = rainParticles.geometry.attributes.position.array;
+        const px = player.pos.x, py = player.pos.y, pz = player.pos.z;
+        const minY = Math.min(py - 55, activeStorm.y - 115);
+        const maxY = activeStorm.y - 2;
+        const spanY = Math.max(40, maxY - minY);
+
+        for (let i = 0; i < pos.length; i += 6) {
+          const dy = -48 * dt;
+          const dx = 3.8 * dt;
+          const dz = 1.6 * dt;
+          pos[i] += dx;
+          pos[i + 1] += dy;
+          pos[i + 2] += dz;
+          pos[i + 3] += dx;
+          pos[i + 4] += dy;
+          pos[i + 5] += dz;
+
+          if (pos[i] - px > 80) { pos[i] -= 160; pos[i + 3] -= 160; }
+          if (pos[i] - px < -80) { pos[i] += 160; pos[i + 3] += 160; }
+          if (pos[i + 2] - pz > 80) { pos[i + 2] -= 160; pos[i + 5] -= 160; }
+          if (pos[i + 2] - pz < -80) { pos[i + 2] += 160; pos[i + 5] += 160; }
+
+          if (pos[i + 1] < minY || pos[i + 1] > maxY) {
+            const newX = px + (Math.random() - 0.5) * 160;
+            const newY = maxY - Math.random() * spanY;
+            const newZ = pz + (Math.random() - 0.5) * 160;
+            const len = 2.6 + Math.random() * 2.2;
+            pos[i] = newX;
+            pos[i + 1] = newY;
+            pos[i + 2] = newZ;
+            pos[i + 3] = newX + 0.25;
+            pos[i + 4] = newY - len;
+            pos[i + 5] = newZ + 0.12;
+          }
+        }
+        rainParticles.geometry.attributes.position.needsUpdate = true;
+
+        stormState.timer -= dt;
+        if (stormState.timer <= 0 && stormState.chargeTimer <= 0 && stormState.boltTimer <= 0) {
+          stormState.timer = 1.8 + Math.random() * 2.8;
+          const hitChance = insideStormCloud ? 0.55 : 0.16;
+          const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
+          const flatFwd = new THREE.Vector3(fwd.x, 0, fwd.z);
+          if (flatFwd.lengthSq() < 0.001) flatFwd.set(0, 0, -1);
+          flatFwd.normalize();
+          const right = new THREE.Vector3(-flatFwd.z, 0, flatFwd.x);
+
+          if (Math.random() < hitChance) {
+            const leadDist = Math.max(16, player.speed * 0.72);
+            stormState.chargePos.set(
+              player.pos.x + flatFwd.x * leadDist,
+              activeStorm.y - 75,
+              player.pos.z + flatFwd.z * leadDist
+            );
+          } else {
+            const aheadDist = 35 + Math.random() * 85;
+            const lateral = (Math.random() - 0.5) * 110;
+            stormState.chargePos.set(
+              player.pos.x + flatFwd.x * aheadDist + right.x * lateral,
+              activeStorm.y - 75,
+              player.pos.z + flatFwd.z * aheadDist + right.z * lateral
+            );
+          }
+
+          rebuildJaggedLightningGeometries();
+          const randYaw = Math.random() * Math.PI * 2;
+          lightningGlowMesh.rotation.set(0, randYaw, 0);
+          lightningBoltMesh.rotation.set(0, randYaw, 0);
+
+          stormState.chargeTimer = 0.72;
+          lightningGlowMesh.position.copy(stormState.chargePos);
+          lightningGlowMesh.visible = true;
+        }
+      } else {
+        rainParticles.visible = false;
+      }
+
+      if (stormState.chargeTimer > 0) {
+        stormState.chargeTimer -= dt;
+        const progress = 1 - Math.max(0, stormState.chargeTimer) / 0.72;
+        const pulse = 0.45 + progress * 0.65 + Math.sin(progress * 28) * 0.12;
+        lightningGlowMesh.scale.set(pulse, 1, pulse);
+        lightningGlowMesh.material.opacity = 0.22 + progress * 0.65;
+
+        if (stormState.chargeTimer <= 0) {
+          lightningGlowMesh.visible = false;
+          stormState.boltPos.copy(stormState.chargePos);
+          stormState.boltTimer = 0.26;
+          lightningBoltMesh.position.copy(stormState.boltPos);
+          lightningBoltMesh.visible = true;
+          playThunderSound();
+
+          const boltDist = Math.hypot(player.pos.x - stormState.boltPos.x, player.pos.z - stormState.boltPos.z);
+          if (boltDist < 12 && !player.isGrounded && !player.isFallingDazed && !isAutoPilot) {
+            triggerDazedFall(new THREE.Vector3((Math.random() - 0.5) * 2, 0.4, (Math.random() - 0.5) * 2).normalize());
+          }
+        }
+      } else {
+        lightningGlowMesh.visible = false;
+      }
+
+      if (stormState.boltTimer > 0) {
+        stormState.boltTimer -= dt;
+        lightningBoltMesh.material.opacity = Math.min(1, stormState.boltTimer * 5);
+        if (stormState.boltTimer <= 0) {
+          lightningBoltMesh.visible = false;
+        }
+      }
+    }
+
+    // --- Macro Biome Density ---
     function getBiomeDensity(x, z) {
       const n = fbm2D(x * 0.0011, z * 0.0011, worldSeed + 881, 2);
       const t = THREE.MathUtils.clamp((n - 0.34) / 0.30, 0, 1);
@@ -960,29 +1302,44 @@
       return t * t * (3 - 2 * t);
     }
 
-    // --- Procedural Ground Terrain (Mountains, Rivers, Forests & Caves) ---
+    // --- Procedural Ground Terrain ---
     function getGroundHeight(x, z) {
-      const n1 = fbm2D(x * 0.0038, z * 0.0038, worldSeed + 313, 3);
-      const n2 = fbm2D(x * 0.014, z * 0.014, worldSeed + 719, 2);
-      const mountain = Math.pow(Math.max(0, n1 - 0.44) * 1.9, 1.75) * 58;
-      let h = -19 + n1 * 16 + (n2 - 0.5) * 7 + mountain;
+      const n1 = fbm2D(x * 0.0034, z * 0.0034, worldSeed + 313, 3);
+      const n2 = fbm2D(x * 0.012, z * 0.012, worldSeed + 719, 2);
+      const ridge = Math.pow(Math.max(0, n1 - 0.36) * 2.1, 1.9) * 320;
+      let h = -20 + n1 * 85 + (n2 - 0.5) * 36 + ridge;
 
       const riverNoise = fbm2D(x * 0.0028 + 11.3, z * 0.0028 - 7.1, worldSeed + 907, 2);
       const riverDist = Math.abs(riverNoise - 0.5);
       if (riverDist < 0.055) {
         const carve = Math.cos((riverDist / 0.055) * (Math.PI * 0.5));
-        h -= carve * 18;
+        h -= carve * 26;
       }
       return h;
     }
 
+    function getTerrainSlope(x, z) {
+      const eps = 2.5;
+      const hL = getGroundHeight(x - eps, z);
+      const hR = getGroundHeight(x + eps, z);
+      const hD = getGroundHeight(x, z - eps);
+      const hU = getGroundHeight(x, z + eps);
+      const nx = hL - hR;
+      const ny = 2 * eps;
+      const nz = hD - hU;
+      const invLen = 1 / Math.hypot(nx, ny, nz);
+      return 1 - ny * invLen;
+    }
+
     function getTerrainSurface(x, z) {
-      const eps = 1.2;
-      const h = getGroundHeight(x, z);
-      const hx = getGroundHeight(x + eps, z);
-      const hz = getGroundHeight(x, z + eps);
-      const normal = new THREE.Vector3(-(hx - h) / eps, 1, -(hz - h) / eps).normalize();
-      return { height: h, normal };
+      const eps = 1.6;
+      const hC = getGroundHeight(x, z);
+      const hL = getGroundHeight(x - eps, z);
+      const hR = getGroundHeight(x + eps, z);
+      const hD = getGroundHeight(x, z - eps);
+      const hU = getGroundHeight(x, z + eps);
+      const normal = new THREE.Vector3(hL - hR, 2 * eps, hD - hU).normalize();
+      return { height: hC, normal };
     }
 
     function buildGroundTerrain(baseX, baseZ) {
@@ -996,28 +1353,46 @@
       const cLow = new THREE.Color(t.groundLow);
       const cMid = new THREE.Color(t.groundMid);
       const cForest = new THREE.Color(t.groundMid).multiplyScalar(0.62);
+      const cDirt = new THREE.Color(t.groundHigh).lerp(new THREE.Color(0x5c4033), 0.45);
       const cHigh = new THREE.Color(t.groundHigh);
-      const cPeak = new THREE.Color(0xe2e8f0);
+      const cPeak = new THREE.Color(0xf1f5f9);
       const tmpCol = new THREE.Color();
       const midCol = new THREE.Color();
 
       for (let i = 0; i < pos.count; i++) {
         const wx = baseX + pos.getX(i);
         const wz = baseZ + pos.getZ(i);
-        const wy = getGroundHeight(wx, wz);
+        const surf = getTerrainSurface(wx, wz);
+        const wy = surf.height;
+        const slope = 1 - surf.normal.y;
         const bio = getBiomeDensity(wx, wz);
+        const lineNoise = (fbm2D(wx * 0.009, wz * 0.009, worldSeed + 523, 3) - 0.5) * 58;
         pos.setY(i, wy);
 
         midCol.copy(cMid).lerp(cForest, bio * 0.85);
-        if (wy < -15) {
+        if (wy < -14) {
           tmpCol.copy(cLow);
-        } else if (wy < -1) {
-          tmpCol.copy(cLow).lerp(midCol, THREE.MathUtils.clamp((wy + 15) / 14, 0, 1));
-        } else if (wy < 18) {
-          tmpCol.copy(midCol).lerp(cHigh, THREE.MathUtils.clamp((wy + 1) / 19, 0, 1));
+        } else if (wy < 6) {
+          tmpCol.copy(cLow).lerp(midCol, THREE.MathUtils.clamp((wy + 14) / 20, 0, 1));
         } else {
-          tmpCol.copy(cHigh).lerp(cPeak, THREE.MathUtils.clamp((wy - 18) / 20, 0, 0.85));
+          tmpCol.copy(midCol);
         }
+
+        // Steep cliffs & sharp slopes switch immediately to dirt/stone regardless of altitude
+        if (slope > 0.32) {
+          const rockOrDirt = fbm2D(wx * 0.025, wz * 0.025, worldSeed + 641, 2);
+          tmpCol.copy(rockOrDirt > 0.48 ? cHigh : cDirt);
+        }
+
+        // High-altitude snow with gradual organic treeline & less snow sticking to sheer cliffs
+        const snowLine = 175 + lineNoise * 1.15;
+        const snowDepth = THREE.MathUtils.clamp((wy - snowLine) / 95, 0, 1);
+        const snowStick = slope > 0.36 ? 0.12 : 1.0;
+        const snowBlend = snowDepth * snowStick;
+        if (snowBlend > 0) {
+          tmpCol.lerp(cPeak, snowBlend * 0.96);
+        }
+
         colors[i * 3] = tmpCol.r;
         colors[i * 3 + 1] = tmpCol.g;
         colors[i * 3 + 2] = tmpCol.b;
@@ -1031,66 +1406,7 @@
       return mesh;
     }
 
-    function buildMountainCave(cx, cy, cz, rotY, rng) {
-      const group = new THREE.Group();
-      group.position.set(cx, cy, cz);
-      group.rotation.y = rotY;
-
-      const tunnelLen = 38 + rng() * 14;
-      const halfSpan = 10.5;
-      const wallH = 15.5;
-
-      for (const side of [-1, 1]) {
-        const flank = new THREE.Mesh(geoCone, matRock);
-        const fRadius = 26 + rng() * 8;
-        const fHeight = 66 + rng() * 20;
-        flank.scale.set(fRadius, fHeight, fRadius * 1.15);
-        flank.position.set(side * (halfSpan + fRadius * 0.82), fHeight * 0.5 - 24, (rng() - 0.5) * 6);
-        flank.rotation.y = rng() * Math.PI;
-        group.add(flank);
-
-        const shoulder = new THREE.Mesh(geoCone, matRock);
-        const sHeight = fHeight * 0.78;
-        shoulder.scale.set(fRadius * 0.78, sHeight, fRadius * 0.85);
-        shoulder.position.set(side * (halfSpan + fRadius * 0.96), sHeight * 0.5 - 26, (rng() - 0.5) * 14);
-        group.add(shoulder);
-      }
-
-      const peakH = 38 + rng() * 14;
-      const peakR = 25 + rng() * 6;
-      const peak = new THREE.Mesh(geoCone, matRock);
-      peak.scale.set(peakR, peakH, peakR * 0.95);
-      peak.position.set(0, wallH + peakH * 0.5 + 1.5, 0);
-      peak.rotation.y = rng() * Math.PI;
-      group.add(peak);
-
-      const floor = new THREE.Mesh(geoBox, matRock);
-      floor.scale.set(halfSpan * 2.4, 4, tunnelLen);
-      floor.position.set(0, -1.8, 0);
-      group.add(floor);
-
-      for (const side of [-1, 1]) {
-        const innerWall = new THREE.Mesh(geoBox, matRock);
-        innerWall.scale.set(8, wallH + 6, tunnelLen);
-        innerWall.position.set(side * (halfSpan + 4.0), wallH * 0.45, 0);
-        innerWall.rotation.z = side * -0.1;
-        group.add(innerWall);
-      }
-      const roof = new THREE.Mesh(geoBox, matRock);
-      roof.scale.set(halfSpan * 2.6, 6, tunnelLen * 0.94);
-      roof.position.set(0, wallH + 2.5, 0);
-      group.add(roof);
-
-      for (let c = 0; c < 4; c++) {
-        const cry = new THREE.Mesh(geoOcta, matCrystal);
-        cry.scale.set(0.85, 2.4, 0.85);
-        cry.position.set((rng() - 0.5) * 10, wallH - 1.8, (rng() - 0.5) * (tunnelLen * 0.65));
-        group.add(cry);
-      }
-
-      return { group, info: { x: cx, y: cy, z: cz, halfWidth: halfSpan - 1, halfLen: tunnelLen * 0.5 + 4, cosR: Math.cos(-rotY), sinR: Math.sin(-rotY), floorY: cy + 0.2 } };
-    }
-
+    // --- Procedural Floating Island Generator ---
     function buildFloatingIsland(cx, cy, cz, radius, rng) {
       const group = new THREE.Group();
       group.position.set(cx, cy, cz);
@@ -1113,7 +1429,7 @@
       topMesh.receiveShadow = true;
       group.add(topMesh);
 
-      const underHeight = radius * 1.65;
+      const underHeight = radius * (1.2 + rng() * 1.1);
       const underGeo = new THREE.ConeGeometry(radius * 0.92, underHeight, segs, 2);
       underGeo.rotateX(Math.PI);
       const uPos = underGeo.attributes.position;
@@ -1129,7 +1445,7 @@
         }
       }
       underGeo.computeVertexNormals();
-      const underMesh = new THREE.Mesh(underGeo, matRock);
+      const underMesh = new THREE.Mesh(underGeo, matDirt);
       underMesh.position.y = -underHeight * 0.5 - radius * 0.12;
       group.add(underMesh);
 
@@ -1137,7 +1453,7 @@
       for (let s = 0; s < shardCount; s++) {
         const ang = rng() * Math.PI * 2;
         const dist = radius * (1.15 + rng() * 0.45);
-        const shard = new THREE.Mesh(geoOcta, matRock);
+        const shard = new THREE.Mesh(geoOcta, matDirt);
         const sc = 1.5 + rng() * 2.5;
         shard.scale.set(sc, sc * 1.6, sc);
         shard.position.set(Math.cos(ang) * dist, -rng() * radius * 0.6, Math.sin(ang) * dist);
@@ -1195,13 +1511,13 @@
 
       if (radius > 20 && rng() > 0.55) {
         const arch = new THREE.Group();
-        const pillar1 = new THREE.Mesh(geoBox, matRock);
+        const pillar1 = new THREE.Mesh(geoBox, matDirt);
         pillar1.scale.set(1.8, 10, 1.8);
         pillar1.position.set(-4.5, 5, 0);
-        const pillar2 = new THREE.Mesh(geoBox, matRock);
+        const pillar2 = new THREE.Mesh(geoBox, matDirt);
         pillar2.scale.set(1.8, 10, 1.8);
         pillar2.position.set(4.5, 5, 0);
-        const lintel = new THREE.Mesh(geoBox, matRock);
+        const lintel = new THREE.Mesh(geoBox, matDirt);
         lintel.scale.set(12, 2, 2.2);
         lintel.position.set(0, 10.5, 0);
         arch.add(pillar1, pillar2, lintel);
@@ -1210,63 +1526,93 @@
         group.add(arch);
       }
 
-      return group;
+      return { group, underHeight };
     }
 
-    function buildCloudCluster(cx, cy, cz, rng, scaleBoost = 1) {
+    function buildCloudCluster(cx, cy, cz, rng, scaleBoost = 1, isStorm = false) {
       const g = new THREE.Group();
       g.position.set(cx, cy, cz);
       const puffs = 5 + Math.floor(rng() * 5);
+      const mat = isStorm ? matStormCloud : matCloud;
       for (let i = 0; i < puffs; i++) {
-        const m = new THREE.Mesh(geoSphere, matCloud);
+        const m = new THREE.Mesh(geoSphere, mat);
         const r = (9 + rng() * 14) * scaleBoost;
-        m.scale.set(r * 1.55, r * 0.62, r * 1.25);
-        m.position.set((rng() - 0.5) * 32 * scaleBoost, (rng() - 0.5) * 6, (rng() - 0.5) * 26 * scaleBoost);
+        m.scale.set(r * 1.6, r * 0.58, r * 1.35);
+        m.position.set((rng() - 0.5) * 34 * scaleBoost, (rng() - 0.5) * 5.5, (rng() - 0.5) * 28 * scaleBoost);
         g.add(m);
       }
       return g;
     }
 
-    // Colossal cumulonimbus cloud towers and fly-through cloud arches above the cloud deck
-    function buildCloudCumulusFormation(cx, cy, cz, rotY, rng) {
-      const group = new THREE.Group();
-      group.position.set(cx, cy, cz);
-      group.rotation.y = rotY;
+    // Sweeping low-slung cloud bridge and shelf formations
+    function buildCloudCumulusFormation(cx, cy, cz, rng, scaleBoost = 1, isStorm = false) {
+      const g = new THREE.Group();
+      g.position.set(cx, cy, cz);
+      g.rotation.y = rng() * Math.PI * 2;
+      const mat = isStorm ? matStormCloud : matCloud;
 
-      // Towering multi-tiered cumulonimbus cloud mountain
-      const tiers = 4;
-      for (let t = 0; t < tiers; t++) {
-        const tierY = t * 14;
-        const tierR = (26 - t * 3.5) + (t === tiers - 1 ? 8 : 0);
-        const puffsInTier = 5 + (tiers - t);
-        for (let p = 0; p < puffsInTier; p++) {
-          const ang = (p / puffsInTier) * Math.PI * 2 + t * 0.5;
-          const dist = tierR * (0.45 + rng() * 0.45);
-          const puff = new THREE.Mesh(geoSphere, matCloud);
-          const pr = 11 + rng() * 7;
-          puff.scale.set(pr * 1.35, pr * 0.85, pr * 1.35);
-          puff.position.set(Math.cos(ang) * dist, tierY + (rng() - 0.5) * 5, Math.sin(ang) * dist);
-          group.add(puff);
-        }
+      const ridgePuffs = 9;
+      for (let i = 0; i < ridgePuffs; i++) {
+        const m = new THREE.Mesh(geoSphere, mat);
+        const t = i / (ridgePuffs - 1);
+        const arch = Math.sin(t * Math.PI);
+        const r = (13 + arch * 10 + rng() * 5) * scaleBoost;
+        m.scale.set(r * 1.85, r * 0.48, r * 1.45);
+        m.position.set((t - 0.5) * 68 * scaleBoost, arch * 6 * scaleBoost, (rng() - 0.5) * 14 * scaleBoost);
+        g.add(m);
       }
 
-      // Colossal fly-through cloud arch alongside the cumulus tower
-      const archX = 36 + rng() * 12;
-      const archSpan = 20;
-      const archHeight = 28;
-      const archSteps = 13;
-      for (let s = 0; s <= archSteps; s++) {
-        const theta = (s / archSteps) * Math.PI;
-        const ax = archX + Math.cos(theta) * archSpan;
-        const ay = Math.sin(theta) * archHeight;
-        const puff = new THREE.Mesh(geoSphere, matCloud);
-        const pr = 8.5 + Math.sin(theta) * 3.5;
-        puff.scale.set(pr * 1.25, pr * 0.9, pr * 1.35);
-        puff.position.set(ax, ay, (rng() - 0.5) * 4);
-        group.add(puff);
+      const steps = 11;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const angle = t * Math.PI;
+        const m = new THREE.Mesh(geoSphere, mat);
+        const r = (9.5 + Math.sin(angle) * 3.5) * scaleBoost;
+        m.scale.set(r * 1.65, r * 0.52, r * 1.45);
+        m.position.set(Math.cos(angle) * 34 * scaleBoost, Math.sin(angle) * 12 * scaleBoost, 44 * scaleBoost);
+        g.add(m);
       }
 
-      return group;
+      return g;
+    }
+
+    // Massive multi-layered cloud ecosystem towering above thunderclouds
+    function buildUpperCloudEcosystem(cx, baseStormY, cz, rng, scaleBoost = 1) {
+      const g = new THREE.Group();
+      g.position.set(cx, baseStormY, cz);
+      g.rotation.y = rng() * Math.PI * 2;
+
+      for (let i = 0; i < 10; i++) {
+        const ang = (i / 10) * Math.PI * 2 + rng() * 0.4;
+        const dist = (18 + rng() * 34) * scaleBoost;
+        const m = new THREE.Mesh(geoSphere, matCloud);
+        const r = (15 + rng() * 11) * scaleBoost;
+        m.scale.set(r * 1.8, r * 0.46, r * 1.5);
+        m.position.set(Math.cos(ang) * dist, 22 + rng() * 8, Math.sin(ang) * dist);
+        g.add(m);
+      }
+
+      const ringCount = 12;
+      for (let i = 0; i < ringCount; i++) {
+        const ang = (i / ringCount) * Math.PI * 2;
+        const dist = (28 + Math.sin(i * 2) * 8) * scaleBoost;
+        const m = new THREE.Mesh(geoSphere, matCloud);
+        const r = (13 + rng() * 8) * scaleBoost;
+        m.scale.set(r * 1.65, r * 0.55, r * 1.4);
+        m.position.set(Math.cos(ang) * dist, 42 + rng() * 10, Math.sin(ang) * dist);
+        g.add(m);
+      }
+
+      for (let i = 0; i < 8; i++) {
+        const t = i / 7;
+        const m = new THREE.Mesh(geoSphere, matCloud);
+        const r = (11 + Math.sin(t * Math.PI) * 7) * scaleBoost;
+        m.scale.set(r * 2.2, r * 0.36, r * 1.3);
+        m.position.set((t - 0.5) * 86 * scaleBoost, 64 + Math.sin(t * Math.PI) * 8, (rng() - 0.5) * 24 * scaleBoost);
+        g.add(m);
+      }
+
+      return g;
     }
 
     // --- Chunk Streaming ---
@@ -1284,83 +1630,45 @@
 
       const baseX = cx * CHUNK_SIZE;
       const baseZ = cz * CHUNK_SIZE;
+
       const chunkIslands = [];
       const chunkRings = [];
-      const chunkCaves = [];
+      const chunkStorms = [];
 
-      // Ground terrain at the bottom of the chunk
       const groundMesh = buildGroundTerrain(baseX, baseZ);
       chunkGroup.add(groundMesh);
 
-      // Fly-through cave embedded inside a mountain peak (placed before trees so trees only clear the tunnel path)
-      let chunkCaveInfo = null;
-      if (rng() > 0.35) {
-        let bestX = baseX, bestZ = baseZ, bestY = -999;
-        for (let probe = 0; probe < 5; probe++) {
-          const px = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.55;
-          const pz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.55;
-          const py = getGroundHeight(px, pz);
-          if (py > bestY) { bestY = py; bestX = px; bestZ = pz; }
-        }
-        if (bestY > -1.5) {
-          // Place cave base slightly above the local hillcrest so terrain never pokes into the tunnel
-          const caveRes = buildMountainCave(bestX, bestY + 1.2, bestZ, rng() * Math.PI, rng);
-          chunkGroup.add(caveRes.group);
-          chunkCaves.push(caveRes.info);
-          activeCaves.push(caveRes.info);
-          chunkCaveInfo = caveRes.info;
-        }
-      }
-
-      // Macro-Scale Biome Forests (InstancedMesh for 60fps):
-      // Smoothly fades from sparse ~1 tree/10m plains into massive, multi-chunk dense forests without hard height cutouts
       const treePlacements = [];
       const step = highQuality ? 4.4 : 5.4;
-      const maxTreesPerChunk = highQuality ? 2600 : 1700;
+      const maxTreesPerChunk = highQuality ? 2600 : 1650;
       for (let sx = -CHUNK_SIZE * 0.49; sx <= CHUNK_SIZE * 0.49; sx += step) {
         for (let sz = -CHUNK_SIZE * 0.49; sz <= CHUNK_SIZE * 0.49; sz += step) {
           if (treePlacements.length >= maxTreesPerChunk) break;
           const wx = baseX + sx;
           const wz = baseZ + sz;
-          const bio = getBiomeDensity(wx, wz); // 0..1 smooth biome fade
+          const bio = getBiomeDensity(wx, wz);
 
-          // Probability smoothly fades from ~0.14 in sparse 10m plains up to 1.0 in dense forest biomes
           const spawnProb = 0.14 + bio * 0.86;
           if (rng() > spawnProb) continue;
 
-          // In dense biomes (bio > 0.55), pack 1-2 extra clustered trees per cell for lush canopy density
           const clusterCount = bio > 0.6 ? (rng() < (bio - 0.4) ? 2 : 1) : 1;
           for (let c = 0; c < clusterCount; c++) {
             if (treePlacements.length >= maxTreesPerChunk) break;
             const gx = wx + (rng() - 0.5) * step * 0.95;
             const gz = wz + (rng() - 0.5) * step * 0.95;
             const gy = getGroundHeight(gx, gz);
-
-            // Only exclude underwater riverbeds/lakes (gy <= -16.8) and extreme rocky summits (gy >= 24)
-            if (gy <= -16.8 || gy >= 24) continue;
-
-            // Smooth altitude fade near the treeline (18m..24m) so hills never show abrupt blank patches
-            if (gy > 18 && rng() > (24 - gy) / 6) continue;
-
-            // Keep only the actual cave tunnel opening clear without carving a giant blank circle around the mountain
-            if (chunkCaveInfo) {
-              const cdx = gx - chunkCaveInfo.x;
-              const cdz = gz - chunkCaveInfo.z;
-              const clx = cdx * chunkCaveInfo.cosR - cdz * chunkCaveInfo.sinR;
-              const clz = cdx * chunkCaveInfo.sinR + cdz * chunkCaveInfo.cosR;
-              if (Math.abs(clx) < chunkCaveInfo.halfWidth + 2.5 && Math.abs(clz) < chunkCaveInfo.halfLen + 3.0) {
-                continue;
-              }
+            const slope = getTerrainSlope(gx, gz);
+            const maxTreeline = 165 + (fbm2D(gx * 0.008, gz * 0.008, worldSeed + 419, 2) - 0.5) * 45;
+            if (gy > -16 && gy < maxTreeline && slope <= 0.32) {
+              const sizeScale = 0.85 + bio * 0.45;
+              treePlacements.push({
+                x: gx,
+                y: gy,
+                z: gz,
+                h: (2.9 + rng() * 4.4) * sizeScale,
+                r: (1.25 + rng() * 0.85) * sizeScale
+              });
             }
-
-            const sizeScale = 0.85 + bio * 0.45;
-            treePlacements.push({
-              x: gx,
-              y: gy,
-              z: gz,
-              h: (2.9 + rng() * 4.4) * sizeScale,
-              r: (1.25 + rng() * 0.85) * sizeScale
-            });
           }
         }
       }
@@ -1388,13 +1696,12 @@
         chunkGroup.add(foliageInst);
       }
 
-      // Low-poly bushes & shrubs scattered across grassy ground & hillsides
-      const bushCount = 24 + Math.floor(rng() * 18);
+      const bushCount = 18 + Math.floor(rng() * 16);
       for (let b = 0; b < bushCount; b++) {
-        const bx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.92;
-        const bz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.92;
+        const bx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.9;
+        const bz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.9;
         const by = getGroundHeight(bx, bz);
-        if (by > -16.5 && by < 22) {
+        if (by > -16.2 && by < 150 && getTerrainSlope(bx, bz) <= 0.32) {
           const bush = new THREE.Mesh(geoSphere, matGrass);
           const bs = 0.85 + rng() * 1.1;
           bush.scale.set(bs * 1.25, bs * 0.75, bs * 1.25);
@@ -1403,78 +1710,88 @@
         }
       }
 
-      // 2 to 4 floating islands per chunk
+      // Floating islands (positioned well above local mountains & sparser over tall peaks)
       const islandCount = 2 + Math.floor(rng() * 3);
       for (let i = 0; i < islandCount; i++) {
         const ix = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.85;
         const iz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.85;
-        const iy = 28 + fbm2D(ix * 0.005, iz * 0.005, worldSeed, 2) * 75 + (rng() - 0.5) * 24;
         const radius = 11 + rng() * 20;
 
-        // Avoid spawning an island directly on player start
-        if (Math.hypot(ix, iz) < 35 && Math.abs(iy - 65) < 25) continue;
+        let localPeakY = getGroundHeight(ix, iz);
+        for (let a = 0; a < 8; a++) {
+          const ang = (a / 8) * Math.PI * 2;
+          const sh = getGroundHeight(ix + Math.cos(ang) * (radius + 14), iz + Math.sin(ang) * (radius + 14));
+          if (sh > localPeakY) localPeakY = sh;
+        }
 
-        const isl = buildFloatingIsland(ix, iy, iz, radius, rng);
-        chunkGroup.add(isl);
-        const underHeight = radius * 1.65;
-        const info = {
-          x: ix,
-          y: iy,
-          z: iz,
-          r: radius + 6,
-          radius: radius,
-          deckR: radius * 0.92,
-          deckY: iy + radius * 0.14,
-          bottomY: iy - underHeight - radius * 0.12
-        };
+        const mountainFactor = THREE.MathUtils.clamp((localPeakY - 60) / 140, 0, 1);
+        if (rng() < mountainFactor * 0.72) continue;
+
+        const minSafeBaseY = Math.max(95, localPeakY + radius * 2.4 + 48);
+        const iy = minSafeBaseY + rng() * 42;
+
+        if (Math.hypot(ix, iz) < 35 && Math.abs(iy - 145) < 25) continue;
+
+        const islRes = buildFloatingIsland(ix, iy, iz, radius, rng);
+        chunkGroup.add(islRes.group);
+        const info = { x: ix, y: iy, z: iz, r: radius + 6, deckR: radius * 0.94, deckY: iy + radius * 0.14, underH: islRes.underHeight };
         chunkIslands.push(info);
         activeIslands.push(info);
       }
 
-      // High cloud deck with dramatic fly-through holes & corridors (y = 115..165)
-      // Uses a grid with organic "sky-well" clearings so you can dive through holes in the clouds
+      // High cloud layers, storm zones & towering multi-layered cloud ecosystems above
       const cloudBio = getCloudDensity(baseX, baseZ);
-      const cloudStep = highQuality ? 30 : 38;
-      for (let sx = -CHUNK_SIZE * 0.45; sx <= CHUNK_SIZE * 0.45; sx += cloudStep) {
-        for (let sz = -CHUNK_SIZE * 0.45; sz <= CHUNK_SIZE * 0.45; sz += cloudStep) {
-          const clx = baseX + sx + (rng() - 0.5) * 14;
-          const clz = baseZ + sz + (rng() - 0.5) * 14;
-          // Carve open circular/winding sky holes through the cloud deck
-          const holeNoise = fbm2D(clx * 0.0085 + 2.7, clz * 0.0085 - 5.4, worldSeed + 509, 2);
-          if (holeNoise < 0.37) continue; // Open fly-through hole in the cloud layer!
-
-          const localBio = getCloudDensity(clx, clz);
-          if (rng() > 0.32 + localBio * 0.65) continue;
-
-          const cly = 118 + fbm2D(clx * 0.004, clz * 0.004, worldSeed + 211, 2) * 34 + (rng() - 0.5) * 14;
-          const scale = 1.15 + localBio * 1.15;
-          chunkGroup.add(buildCloudCluster(clx, cly, clz, rng, scale));
-        }
+      const isStormExpanse = cloudBio > 0.52;
+      const totalClouds = Math.round(4 + cloudBio * 12);
+      for (let c = 0; c < totalClouds; c++) {
+        const clx = baseX + (rng() - 0.5) * CHUNK_SIZE;
+        const clz = baseZ + (rng() - 0.5) * CHUNK_SIZE;
+        const localBio = getCloudDensity(clx, clz);
+        const cly = 175 + rng() * 68;
+        const scale = 1.05 + localBio * 0.9;
+        const cloudIsStorm = isStormExpanse && localBio > 0.48;
+        chunkGroup.add(buildCloudCluster(clx, cly, clz, rng, scale, cloudIsStorm));
       }
 
-      // Upper high-altitude wispy cloud layer (y = 185..235)
-      const upperCloudCount = 3 + Math.floor(cloudBio * 5);
-      for (let uc = 0; uc < upperCloudCount; uc++) {
-        const ucx = baseX + (rng() - 0.5) * CHUNK_SIZE;
-        const ucz = baseZ + (rng() - 0.5) * CHUNK_SIZE;
-        const ucy = 188 + rng() * 48;
-        chunkGroup.add(buildCloudCluster(ucx, ucy, ucz, rng, 1.1 + cloudBio * 0.6));
+      if (isStormExpanse) {
+        const stormX = baseX + (rng() - 0.5) * 40;
+        const stormZ = baseZ + (rng() - 0.5) * 40;
+        const stormY = 185 + rng() * 24;
+        const stormScale = 1.2 + cloudBio * 0.55;
+        chunkGroup.add(buildCloudCumulusFormation(stormX, stormY, stormZ, rng, stormScale, true));
+        chunkGroup.add(buildUpperCloudEcosystem(stormX, stormY + 12, stormZ, rng, stormScale));
+        const stInfo = { x: stormX, y: stormY, z: stormZ, r: 105 * stormScale };
+        chunkStorms.push(stInfo);
+        activeStorms.push(stInfo);
+      } else if (cloudBio > 0.25 && rng() > 0.25) {
+        const clx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.6;
+        const clz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.6;
+        const cly = 188 + rng() * 48;
+        chunkGroup.add(buildCloudCumulusFormation(clx, cly, clz, rng, 0.95 + cloudBio * 0.65, false));
       }
 
-      // Towering cumulonimbus cloud mountains & colossal fly-through cloud arches above the cloud deck
-      if (rng() > 0.25) {
-        const smx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.55;
-        const smz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.55;
-        const smy = 142 + rng() * 32;
-        const cloudFormation = buildCloudCumulusFormation(smx, smy, smz, rng() * Math.PI * 2, rng);
-        chunkGroup.add(cloudFormation);
+      if (isStormExpanse) {
+        const stormX = baseX + (rng() - 0.5) * 40;
+        const stormZ = baseZ + (rng() - 0.5) * 40;
+        const stormY = 236 + rng() * 24;
+        const stormScale = 1.15 + cloudBio * 0.55;
+        chunkGroup.add(buildCloudCumulusFormation(stormX, stormY, stormZ, rng, stormScale, true));
+        chunkGroup.add(buildUpperCloudEcosystem(stormX, stormY + 12, stormZ, rng, stormScale));
+        const stInfo = { x: stormX, y: stormY, z: stormZ, r: 95 * stormScale };
+        chunkStorms.push(stInfo);
+        activeStorms.push(stInfo);
+      } else if (cloudBio > 0.35 && rng() > 0.35) {
+        const clx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.6;
+        const clz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.6;
+        const cly = 242 + rng() * 48;
+        chunkGroup.add(buildCloudCumulusFormation(clx, cly, clz, rng, 0.9 + cloudBio * 0.65, false));
       }
 
-      // Wind-boost ring (spawns both mid-sky and above the clouds!)
-      if (rng() > 0.25) {
+      // Wind-boost ring
+      if (rng() > 0.3) {
         const rx = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.6;
         const rz = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.6;
-        const ry = rng() > 0.45 ? (145 + rng() * 65) : (42 + rng() * 55);
+        const ry = Math.max(85, getGroundHeight(rx, rz) + 42) + rng() * 65;
         const ring = new THREE.Mesh(geoRing, matRing);
         ring.position.set(rx, ry, rz);
         ring.rotation.y = rng() * Math.PI;
@@ -1485,21 +1802,19 @@
       }
 
       scene.add(chunkGroup);
-      chunks.set(key, { group: chunkGroup, islands: chunkIslands, rings: chunkRings, caves: chunkCaves });
+      chunks.set(key, { group: chunkGroup, islands: chunkIslands, rings: chunkRings, storms: chunkStorms });
     }
 
     function updateChunks() {
       const pcx = Math.round(player.pos.x / CHUNK_SIZE);
       const pcz = Math.round(player.pos.z / CHUNK_SIZE);
 
-      // Load nearby chunks
       for (let dx = -VIEW_RADIUS; dx <= VIEW_RADIUS; dx++) {
         for (let dz = -VIEW_RADIUS; dz <= VIEW_RADIUS; dz++) {
           generateChunk(pcx + dx, pcz + dz);
         }
       }
 
-      // Unload distant chunks
       for (const [key, data] of chunks.entries()) {
         const [cx, cz] = key.split(',').map(Number);
         if (Math.abs(cx - pcx) > VIEW_RADIUS + 1 || Math.abs(cz - pcz) > VIEW_RADIUS + 1) {
@@ -1512,10 +1827,10 @@
             const idx = activeRings.indexOf(r);
             if (idx !== -1) activeRings.splice(idx, 1);
           }
-          if (data.caves) {
-            for (const cv of data.caves) {
-              const idx = activeCaves.indexOf(cv);
-              if (idx !== -1) activeCaves.splice(idx, 1);
+          if (data.storms) {
+            for (const st of data.storms) {
+              const idx = activeStorms.indexOf(st);
+              if (idx !== -1) activeStorms.splice(idx, 1);
             }
           }
           chunks.delete(key);
@@ -1530,7 +1845,7 @@
       chunks.clear();
       activeIslands.length = 0;
       activeRings.length = 0;
-      activeCaves.length = 0;
+      activeStorms.length = 0;
       worldSeed = newSeed;
       document.getElementById('seed-label').textContent = worldSeed;
       updateChunks();
@@ -1546,13 +1861,12 @@
         skyMesh.material.uniforms.topColor.value.setHex(t.skyTop);
         skyMesh.material.uniforms.midColor.value.setHex(t.skyMid);
         skyMesh.material.uniforms.bottomColor.value.setHex(t.skyHorizon);
-        skyMesh.material.uniforms.fogColor.value.setHex(t.fogColor);
       }
 
       const fogDists = [
-        { near: 140, far: 620 },
-        { near: 90, far: 440 },
-        { near: 55, far: 300 }
+        { near: 260, far: 1150 },
+        { near: 190, far: 920 },
+        { near: 120, far: 640 }
       ];
       const fd = fogDists[fogLevel];
       scene.fog = new THREE.Fog(t.fogColor, fd.near, fd.far);
@@ -1563,8 +1877,11 @@
         hemiLight.groundColor.setHex(t.hemiGround);
       }
 
-      if (matGrass) matGrass.color.setHex(t.grassColor);
-      if (matRock) matRock.color.setHex(t.rockColor);
+      if (matGrass) matGrass.color.setHex(t.groundMid);
+      if (matRock) matRock.color.setHex(t.groundHigh);
+      if (matDirt) {
+        matDirt.color.setHex(t.groundHigh).lerp(new THREE.Color(0x5c4033), 0.45);
+      }
       if (matCrystal) {
         matCrystal.color.setHex(t.crystalColor);
         matCrystal.emissive.setHex(t.crystalColor);
@@ -1577,7 +1894,6 @@
       if (cloudSeaMesh) {
         cloudSeaMesh.material.color.setHex(t.waterFloor);
       }
-      // Refresh ground chunk colors for the new theme
       if (chunks.size > 0) {
         for (const [key, data] of chunks.entries()) {
           const [cx, cz] = key.split(',').map(Number);
@@ -1593,25 +1909,284 @@
       }
     }
 
-    // --- Flight Physics & Auto-Cruise ---
+    function setStandingAppearance(standing) {
+      if (!player.leftWing || !player.foldedWings) return;
+      player.leftWing.visible = !standing;
+      player.rightWing.visible = !standing;
+      player.foldedWings.visible = standing;
+      if (player.flightTail) player.flightTail.visible = !standing;
+      if (player.standTail) player.standTail.visible = standing;
+      if (player.feetGroup) player.feetGroup.visible = standing;
+    }
+
+    function setGroundedState(grounded, groundY, island = null, normal = null) {
+      player.isGrounded = grounded;
+      player.landedIsland = island;
+      if (normal) {
+        player.groundNormal.copy(normal);
+      } else {
+        player.groundNormal.set(0, 1, 0);
+      }
+      setStandingAppearance(grounded);
+      if (grounded) {
+        player.pos.y = groundY + 0.19;
+        player.speed = 0;
+        player.flapEnergy = 0;
+        player.smoothFlapLift = 0;
+        player.isBraking = false;
+        player.isBoosting = false;
+        player.isFallingDazed = false;
+        player.ledgeDropTimer = 0;
+        player.isHopping = false;
+        player.hopVelY = 0;
+        const flatFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
+        flatFwd.y = 0;
+        if (flatFwd.lengthSq() < 0.0001) flatFwd.set(0, 0, -1);
+        flatFwd.normalize();
+        player.yaw = Math.atan2(-flatFwd.x, -flatFwd.z);
+        player.pitch = 0;
+        player.roll = 0;
+        player.euler.set(0, player.yaw, 0, 'YXZ');
+        player.quat.setFromEuler(player.euler);
+      }
+    }
+
+    function triggerDazedFall(bounceDir = null) {
+      if (player.isFallingDazed) return;
+      player.isGrounded = false;
+      player.landedIsland = null;
+      player.isDazed = true;
+      player.isFallingDazed = true;
+      player.dazeTime = 0;
+      player.isBraking = false;
+      player.isBoosting = false;
+      player.flapEnergy = 0;
+      player.smoothFlapLift = 0;
+      player.speed = 0;
+
+      if (bounceDir) {
+        player.dazedVel.set(bounceDir.x * 11.5, Math.max(3.5, bounceDir.y * 6.0), bounceDir.z * 11.5);
+      } else {
+        const back = new THREE.Vector3(0, 0, 1).applyQuaternion(player.quat);
+        back.y = 0;
+        if (back.lengthSq() < 0.0001) back.set(0, 0, 1);
+        back.normalize();
+        player.dazedVel.set(back.x * 9.5, 3.8, back.z * 9.5);
+      }
+      setStandingAppearance(false);
+    }
+
+    // --- Flight & Ground Walking Physics ---
     let autoTime = 0;
     function updatePlayer(dt) {
       let targetPitchInput = 0;
       let targetYawInput = 0;
-      let isBraking = !isAutoPilot && (keys['ShiftLeft'] || keys['ShiftRight'] || keys['KeyB'] || touchDive);
+      let isBraking = !isAutoPilot && (keys['ShiftLeft'] || keys['ShiftRight'] || keys['KeyB'] || touchBrake);
+      let wantBoost = !isAutoPilot && !player.isGrounded && (keys['KeyF'] || touchBoostHeld);
+
+      if (wantBoost && player.boostEnergy > 0.02 && player.boostCooldownTimer <= 0) {
+        player.isBoosting = true;
+        player.boostEnergy = Math.max(0, player.boostEnergy - dt * 0.36);
+        if (player.boostEnergy <= 0.02) {
+          player.isBoosting = false;
+          player.boostCooldownTimer = 1.6;
+        }
+      } else {
+        if (player.isBoosting) {
+          player.boostCooldownTimer = 1.6;
+        }
+        player.isBoosting = false;
+        if (player.boostCooldownTimer > 0) {
+          player.boostCooldownTimer = Math.max(0, player.boostCooldownTimer - dt);
+        } else {
+          player.boostEnergy = Math.min(1.0, player.boostEnergy + dt * 0.24);
+        }
+      }
+
+      if (player.isGrounded && isAutoPilot) {
+        setGroundedState(false, player.pos.y);
+        player.speed = 28;
+        triggerFlap();
+      }
+      if (player.isFallingDazed && isAutoPilot) {
+        player.isFallingDazed = false;
+        player.isDazed = false;
+        player.speed = 28;
+      }
+
+      if (player.isDazed && player.starsGroup) {
+        player.dazeTime += dt;
+        player.starsGroup.visible = true;
+        player.starsGroup.rotation.y = player.dazeTime * 4.2;
+      } else if (player.starsGroup) {
+        player.starsGroup.visible = false;
+      }
+
+      // === SLOW DAZED FALL ===
+      if (player.isFallingDazed && !isAutoPilot) {
+        player.pos.addScaledVector(player.dazedVel, dt);
+        player.dazedVel.x *= Math.pow(0.28, dt);
+        player.dazedVel.z *= Math.pow(0.28, dt);
+        player.dazedVel.y = Math.max(-9.5, player.dazedVel.y - 16 * dt);
+
+        player.roll = Math.sin(player.dazeTime * 6.5) * 0.28;
+        player.pitch = Math.cos(player.dazeTime * 4.5) * 0.16;
+        player.euler.set(player.pitch, player.yaw, player.roll, 'YXZ');
+        player.quat.setFromEuler(player.euler);
+
+        for (const isl of activeIslands) {
+          const dx = player.pos.x - isl.x;
+          const dz = player.pos.z - isl.z;
+          const hDist = Math.hypot(dx, dz);
+          const bottomY = isl.y - isl.underH - (isl.deckY - isl.y);
+
+          if (hDist < isl.deckR + 0.5 && player.pos.y <= isl.deckY + 0.35 && player.pos.y >= isl.deckY - 2.2) {
+            setGroundedState(true, isl.deckY, isl, new THREE.Vector3(0, 1, 0));
+            return;
+          }
+          if (player.pos.y < isl.deckY - 0.6 && player.pos.y > bottomY) {
+            const t = THREE.MathUtils.clamp((player.pos.y - bottomY) / Math.max(1, isl.deckY - bottomY), 0, 1);
+            const rockR = isl.deckR * (0.14 + 0.86 * t) + 1.2;
+            if (hDist < rockR) {
+              const outX = hDist > 0.001 ? dx / hDist : 1;
+              const outZ = hDist > 0.001 ? dz / hDist : 0;
+              player.pos.x = isl.x + outX * (rockR + 0.35);
+              player.pos.z = isl.z + outZ * (rockR + 0.35);
+              player.dazedVel.x = Math.max(player.dazedVel.x * outX, 3.0) * outX;
+              player.dazedVel.z = Math.max(player.dazedVel.z * outZ, 3.0) * outZ;
+            }
+          }
+        }
+
+        const surf = getTerrainSurface(player.pos.x, player.pos.z);
+        const floorY = Math.max(-18, surf.height);
+        if (player.pos.y <= floorY + 0.28) {
+          setGroundedState(true, floorY, null, surf.height > -18 ? surf.normal : new THREE.Vector3(0, 1, 0));
+          return;
+        }
+
+        player.group.position.copy(player.pos);
+        player.group.quaternion.copy(player.quat);
+        player.flapPhase += dt * 4.2;
+        const flutter = Math.sin(player.flapPhase) * 0.22;
+        player.leftWing.rotation.set(0, 0.25, flutter + 0.35);
+        player.rightWing.rotation.set(0, -0.25, -flutter - 0.35);
+        player.leftTip.rotation.z = flutter * 0.4;
+        player.rightTip.rotation.z = -flutter * 0.4;
+
+        document.getElementById('hud-speed').textContent = '0';
+        document.getElementById('hud-alt').textContent = Math.round(player.pos.y);
+        return;
+      }
+
+      // === GROUNDED / WALKING / HOPPING MODE ===
+      if (player.isGrounded && !isAutoPilot) {
+        player.isBraking = false;
+        let moveForward = 0;
+        let turnInput = 0;
+        if (keys['KeyW'] || keys['ArrowUp']) moveForward += 1;
+        if (keys['KeyS'] || keys['ArrowDown']) moveForward -= 1;
+        if (keys['KeyA'] || keys['ArrowLeft']) turnInput += 1;
+        if (keys['KeyD'] || keys['ArrowRight']) turnInput -= 1;
+        if (touchSteer.active) {
+          turnInput -= touchSteer.x;
+          moveForward -= touchSteer.y;
+        }
+
+        if (player.isDazed && (Math.abs(moveForward) > 0.05 || Math.abs(turnInput) > 0.05)) {
+          player.isDazed = false;
+        }
+
+        player.yaw += turnInput * 2.2 * dt;
+
+        const walkSpeed = 7.5;
+        const forwardFlat = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
+        player.pos.addScaledVector(forwardFlat, moveForward * walkSpeed * dt);
+
+        let supportY = null;
+        let stillOnIsland = false;
+        if (player.landedIsland) {
+          const isl = player.landedIsland;
+          const dist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
+          if (dist <= isl.deckR + 0.35) {
+            supportY = isl.deckY;
+            player.groundNormal.set(0, 1, 0);
+            stillOnIsland = true;
+          } else {
+            player.landedIsland = null;
+          }
+        }
+        if (!stillOnIsland && supportY === null) {
+          const surf = getTerrainSurface(player.pos.x, player.pos.z);
+          const groundY = Math.max(-18, surf.height);
+          if (player.pos.y <= groundY + 1.8) {
+            supportY = groundY;
+            player.groundNormal.copy(surf.height > -18 ? surf.normal : new THREE.Vector3(0, 1, 0));
+          }
+        }
+
+        if (supportY === null && !player.isHopping) {
+          setGroundedState(false, player.pos.y);
+          player.ledgeDropTimer = 0.42;
+          player.speed = 16;
+          return;
+        }
+
+        if (player.isHopping) {
+          player.hopVelY -= 26 * dt;
+          player.pos.y += player.hopVelY * dt;
+          if (supportY !== null && player.pos.y <= supportY + 0.19 && player.hopVelY <= 0) {
+            player.pos.y = supportY + 0.19;
+            player.isHopping = false;
+            player.hopVelY = 0;
+          }
+        } else if (supportY !== null) {
+          player.pos.y = supportY + 0.19;
+        }
+
+        const yawQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), player.yaw);
+        const slopeQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), player.groundNormal);
+        player.quat.copy(slopeQuat).multiply(yawQuat).normalize();
+        player.euler.setFromQuaternion(player.quat, 'YXZ');
+
+        const isMoving = Math.abs(moveForward) > 0.05 || Math.abs(turnInput) > 0.05;
+        if (isMoving && !player.isHopping) {
+          player.walkPhase += dt * 14;
+        } else {
+          player.walkPhase = 0;
+        }
+        const bob = (isMoving && !player.isHopping) ? Math.abs(Math.sin(player.walkPhase)) * 0.06 : 0;
+        player.group.position.set(player.pos.x, player.pos.y + bob, player.pos.z);
+        player.group.quaternion.copy(player.quat);
+
+        if (player.feetGroup && player.feetGroup.children.length === 2) {
+          const swing = (isMoving && !player.isHopping) ? Math.sin(player.walkPhase) * 0.45 : 0;
+          player.feetGroup.children[0].rotation.x = swing;
+          player.feetGroup.children[1].rotation.x = -swing;
+        }
+
+        player.group.updateMatrixWorld();
+        const bodyPos = new THREE.Vector3(0, 0.05, 0.2).applyMatrix4(player.group.matrixWorld);
+        updateTrail(player.trailLeft, bodyPos);
+        updateTrail(player.trailRight, bodyPos);
+
+        if (audio.initialized && audio.windGain) {
+          audio.windGain.gain.setTargetAtTime(0, audio.ctx.currentTime, 0.1);
+        }
+        document.getElementById('hud-speed').textContent = Math.round(Math.abs(moveForward) * walkSpeed * 2.4);
+        document.getElementById('hud-alt').textContent = Math.round(player.pos.y);
+        return;
+      }
+
+      // === FLIGHT MODE ===
+      player.isBraking = isBraking;
 
       if (isAutoPilot) {
-        player.isGrounded = false;
-        player.isHopping = false;
-        player.isDazed = false;
-        player.isFallingDazed = false;
-        player.ledgeDropTimer = 0;
         autoTime += dt;
-        const desiredAlt = 78 + Math.sin(autoTime * 0.42) * 24;
+        const desiredAlt = 148 + Math.sin(autoTime * 0.42) * 28;
         if (player.pos.y < desiredAlt - 2 && player.flapCooldownTimer <= 0) {
           triggerFlap();
         }
-        // Smooth upright auto-cruise steering
         targetYawInput = Math.sin(autoTime * 0.26) * 0.4;
         targetPitchInput = THREE.MathUtils.clamp((desiredAlt - player.pos.y) * 0.02, -0.35, 0.35);
 
@@ -1637,237 +2212,11 @@
         player.roll = THREE.MathUtils.lerp(player.roll, player.smoothYawInput * 0.6, 1 - Math.exp(-dt * 3.0));
         player.euler.set(player.pitch, player.yaw, player.roll, 'YXZ');
         player.quat.setFromEuler(player.euler);
-      } else if (player.isFallingDazed) {
-        // Slow tumbling fall after hitting a cliff/mountain: press Space anytime mid-fall to recover flight!
-        player.dazeTime += dt;
-        player.speed = THREE.MathUtils.lerp(player.speed, 4.5, 1 - Math.exp(-dt * 2.5));
-        player.verticalVel = Math.max(-11.5, player.verticalVel - 12.0 * dt);
-
-        const driftFwd = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
-        player.pos.addScaledVector(driftFwd, player.speed * dt);
-        player.pos.y += player.verticalVel * dt;
-
-        // Keep outside floating island tapered rock cones while drifting down so we never drift inside walls
-        for (const isl of activeIslands) {
-          if (player.pos.y < isl.deckY - 0.5 && player.pos.y > isl.bottomY) {
-            const tCone = THREE.MathUtils.clamp((player.pos.y - isl.bottomY) / Math.max(1, isl.deckY - isl.bottomY), 0, 1);
-            const coneR = isl.radius * (0.14 + 0.88 * tCone);
-            const dx = player.pos.x - isl.x;
-            const dz = player.pos.z - isl.z;
-            const horizDist = Math.hypot(dx, dz);
-            if (horizDist < coneR + 1.4) {
-              const ang = horizDist > 0.01 ? Math.atan2(dz, dx) : player.yaw;
-              player.pos.x = isl.x + Math.cos(ang) * (coneR + 1.5);
-              player.pos.z = isl.z + Math.sin(ang) * (coneR + 1.5);
-              player.yaw = ang;
-            }
-          }
-        }
-
-        // Keep outside cave side walls while falling dazed
-        for (const cv of activeCaves) {
-          const dx = player.pos.x - cv.x;
-          const dz = player.pos.z - cv.z;
-          const lx = dx * cv.cosR - dz * cv.sinR;
-          const lz = dx * cv.sinR + dz * cv.cosR;
-          if (Math.abs(lz) < cv.halfLen && Math.abs(lx) >= cv.halfWidth - 0.6 && Math.abs(lx) < cv.halfWidth + 7.5 && player.pos.y < cv.y + 17) {
-            const safeLx = lx >= 0 ? cv.halfWidth + 7.8 : -(cv.halfWidth + 7.8);
-            player.pos.x = cv.x + safeLx * cv.cosR + lz * cv.sinR;
-            player.pos.z = cv.z - safeLx * cv.sinR + lz * cv.cosR;
-          }
-        }
-
-        // Keep slightly above steep mountain slopes while sliding/drifting downward
-        const fallSurf = getTerrainSurface(player.pos.x, player.pos.z);
-        if (fallSurf.height >= -17.6 && fallSurf.normal.y < 0.88 && player.pos.y < fallSurf.height + 0.7) {
-          player.pos.y = fallSurf.height + 0.7;
-          player.pos.x += fallSurf.normal.x * 5.0 * dt;
-          player.pos.z += fallSurf.normal.z * 5.0 * dt;
-        }
-
-        // Gentle dazed wobble as the dove flutters downward
-        player.yaw += Math.sin(player.dazeTime * 3.2) * 0.6 * dt;
-        player.euler.set(-0.22 + Math.sin(player.dazeTime * 5) * 0.12, player.yaw, Math.cos(player.dazeTime * 4) * 0.35, 'YXZ');
-        player.quat.setFromEuler(player.euler);
-
-        // Press Space mid-fall to snap out of daze and restart flight!
-        if (keys['Space'] || touchFlapHeld) {
-          keys['Space'] = false;
-          touchFlapHeld = false;
-          player.isFallingDazed = false;
-          player.isDazed = false;
-          player.speed = 24;
-          player.verticalVel = 0;
-          player.pitch = 0.22;
-          player.euler.set(player.pitch, player.yaw, 0, 'YXZ');
-          player.quat.setFromEuler(player.euler);
-          player.flapCooldownTimer = 0;
-          triggerFlap();
-        } else {
-          // Check touchdown on either a floating island deck or the main terrain below
-          let landed = false;
-          for (const isl of activeIslands) {
-            const horizDist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
-            if (horizDist <= isl.deckR && player.pos.y <= isl.deckY + 0.5 && player.pos.y >= isl.deckY - 1.6) {
-              player.isFallingDazed = false;
-              player.isGrounded = true;
-              player.isDazed = true;
-              player.groundType = 'island';
-              player.pos.y = isl.deckY + 0.25;
-              player.speed = 0;
-              player.verticalVel = 0;
-              landed = true;
-              break;
-            }
-          }
-          if (!landed) {
-            const surf = getTerrainSurface(player.pos.x, player.pos.z);
-            if (surf.height >= -17.6 && player.pos.y <= surf.height + 0.45) {
-              player.isFallingDazed = false;
-              player.isGrounded = true;
-              player.isDazed = true;
-              player.groundType = 'terrain';
-              player.pos.y = surf.height + 0.25;
-              player.speed = 0;
-              player.verticalVel = 0;
-            } else if (surf.height < -17.6 && player.pos.y <= -17.2) {
-              // Water splash wakes the dove right back into flight
-              player.isFallingDazed = false;
-              player.isDazed = false;
-              player.pos.y = -16.8;
-              player.speed = 22;
-              player.verticalVel = 0;
-              player.flapCooldownTimer = 0;
-              triggerFlap();
-            }
-          }
-        }
-      } else if (player.isGrounded) {
-        // Walking / perched mode on ground or floating island deck (movement commences immediately & clears dizzy stars!)
-        let turnInput = 0;
-        let moveInput = 0;
-        if (keys['KeyA'] || keys['ArrowLeft']) turnInput += 1;
-        if (keys['KeyD'] || keys['ArrowRight']) turnInput -= 1;
-        if (keys['KeyW'] || keys['ArrowUp']) moveInput += 1;
-        if (keys['KeyS'] || keys['ArrowDown']) moveInput -= 1;
-
-        if (pointerSteer.active) {
-          turnInput -= pointerSteer.x * 1.1;
-          moveInput -= pointerSteer.y * 1.1;
-        }
-        if (touchSteer.active) {
-          turnInput -= touchSteer.x * 1.2;
-          moveInput -= touchSteer.y * 1.2;
-        }
-
-        // As soon as movement or turning begins, dizzy stars disappear!
-        if (player.isDazed) {
-          player.dazeTime += dt;
-          if (Math.abs(moveInput) > 0.05 || Math.abs(turnInput) > 0.05) {
-            player.isDazed = false;
-          }
-        }
-
-        player.yaw += turnInput * 2.2 * dt;
-        const walkSpeed = moveInput * 7.5;
-        player.speed = Math.abs(walkSpeed);
-
-        const walkForward = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
-        player.pos.addScaledVector(walkForward, walkSpeed * dt);
-
-        // Keep seated with feet planted on either the floating island deck or normal terrain
-        let supportY = null;
-        let surfaceNormal = new THREE.Vector3(0, 1, 0);
-        if (player.groundType === 'island') {
-          for (const isl of activeIslands) {
-            const horizDist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
-            if (horizDist <= isl.deckR) {
-              supportY = isl.deckY + 0.25;
-              break;
-            }
-          }
-        }
-        if (supportY === null) {
-          const surf = getTerrainSurface(player.pos.x, player.pos.z);
-          if (player.groundType === 'island') {
-            // Walked off the edge of a floating island -> drop briefly before spreading wings into fly mode!
-            player.isGrounded = false;
-            player.isHopping = false;
-            player.isDazed = false;
-            player.ledgeDropTimer = 0.55;
-            player.verticalVel = -3.5;
-            player.speed = 14;
-            player.flapEnergy = 0;
-          } else if (surf.height < -17.6) {
-            // Reached deep water -> hop back into flight
-            player.isGrounded = false;
-            player.isHopping = false;
-            player.isDazed = false;
-            player.speed = 24;
-            player.flapEnergy = 0.55;
-            player.pos.y = -17.0;
-          } else {
-            supportY = surf.height + 0.25;
-            surfaceNormal.copy(surf.normal);
-          }
-        }
-
-        if (player.isGrounded && supportY !== null) {
-          if (player.isHopping) {
-            // First Space press: mid-air hop! Press Space a second time before landing to take off
-            player.hopVel -= 19.5 * dt;
-            player.pos.y += player.hopVel * dt;
-            if (player.pos.y <= supportY && player.hopVel <= 0) {
-              player.pos.y = supportY;
-              player.isHopping = false;
-              player.hopVel = 0;
-            }
-          } else {
-            player.pos.y = THREE.MathUtils.lerp(player.pos.y, supportY, 1 - Math.exp(-dt * 24));
-            if (player.pos.y < supportY) player.pos.y = supportY;
-            const bob = Math.abs(walkSpeed) > 0.2 ? Math.abs(Math.sin(player.walkPhase)) * 0.05 : 0;
-            player.pos.y += bob;
-          }
-
-          // Align dove smoothly to the hill slope so it stands with its feet on top of hills
-          const headingQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), player.yaw);
-          const blendedUp = new THREE.Vector3(0, 1, 0).lerp(surfaceNormal, 0.55).normalize();
-          const slopeQuat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), blendedUp);
-          player.quat.copy(slopeQuat).multiply(headingQuat).normalize();
-          player.euler.setFromQuaternion(player.quat, 'YXZ');
-          player.pitch = player.euler.x;
-          player.roll = player.euler.z;
-        }
-
-        // Double-jump takeoff: 1st Space = hop, 2nd Space while hopping = spread wings & fly!
-        if (keys['Space'] || touchFlapHeld) {
-          keys['Space'] = false;
-          touchFlapHeld = false;
-          player.isDazed = false;
-          if (!player.isHopping) {
-            player.isHopping = true;
-            player.hopVel = 6.4;
-            player.pos.y += 0.18;
-            playFlapSound();
-          } else {
-            player.isGrounded = false;
-            player.isHopping = false;
-            player.hopVel = 0;
-            player.pos.y += 0.9;
-            player.speed = Math.max(24, player.speed + 18);
-            player.pitch = 0.24;
-            player.euler.set(player.pitch, player.yaw, 0, 'YXZ');
-            player.quat.setFromEuler(player.euler);
-            player.flapCooldownTimer = 0;
-            triggerFlap();
-          }
-        }
       } else {
-        // Manual plane-style flight: A/D rolls continuously (barrel roll!), W/S pitches up/down to carve turns!
         if (keys['KeyW'] || keys['ArrowUp']) targetPitchInput -= 1;
         if (keys['KeyS'] || keys['ArrowDown']) targetPitchInput += 1;
-        if (keys['KeyA'] || keys['ArrowLeft']) targetYawInput += 1;   // Roll left
-        if (keys['KeyD'] || keys['ArrowRight']) targetYawInput -= 1;  // Roll right
+        if (keys['KeyA'] || keys['ArrowLeft']) targetYawInput += 1;
+        if (keys['KeyD'] || keys['ArrowRight']) targetYawInput -= 1;
 
         if (pointerSteer.active) {
           targetYawInput -= pointerSteer.x * 1.15;
@@ -1878,392 +2227,198 @@
           targetPitchInput -= touchSteer.y * 1.15;
         }
 
-        // Smoothly ease roll and pitch inputs so there is zero jolt
         const inputEase = 1 - Math.exp(-dt * 5.0);
         player.smoothYawInput = THREE.MathUtils.lerp(player.smoothYawInput, targetYawInput, inputEase);
         player.smoothPitchInput = THREE.MathUtils.lerp(player.smoothPitchInput, targetPitchInput, inputEase);
 
-        const rollRate = 2.85;  // Fast enough for smooth A/D barrel rolls
-        const pitchRate = 1.65; // Crisp vertical loops & swoops
-
+        const rollRate = 2.85;
+        const pitchRate = 1.45;
         let rollDelta = player.smoothYawInput * rollRate * dt;
-        if (player.barrelRollDir !== 0) {
-          player.barrelRollProgress += dt / 0.78;
-          if (player.barrelRollProgress >= 1) {
-            player.barrelRollDir = 0;
-            player.barrelRollProgress = 0;
-          } else {
-            rollDelta += player.barrelRollDir * (Math.PI * 2 / 0.78) * dt;
-          }
-        }
 
-        // Keep full pitch authority at normal/high speeds so you can pull straight up,
-        // and only soften upward pitch once airspeed bleeds near stall (< 22)
         const curFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-        const spdRatio = THREE.MathUtils.clamp((player.speed - player.minSpeed) / 14, 0.25, 1);
-        const pitchScale = (player.smoothPitchInput > 0 && curFwd.y > 0.15 && player.flapEnergy < 0.2) ? spdRatio : 1;
+        const spdRatio = THREE.MathUtils.clamp((player.speed - player.minSpeed) / 26, 0.12, 1);
+        const pitchScale = (player.smoothPitchInput > 0 && curFwd.y > 0.05 && player.flapEnergy < 0.25) ? spdRatio : 1;
 
         const qRoll = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), rollDelta);
         const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), player.smoothPitchInput * pitchRate * pitchScale * dt);
         player.quat.multiply(qRoll).multiply(qPitch).normalize();
 
-        // Subtle natural bank turn when rolled sideways (amplified when pressing W or S)
         const rightVec = new THREE.Vector3(1, 0, 0).applyQuaternion(player.quat);
         const bankTurn = rightVec.y * 0.28 * dt;
         const qBankYaw = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), bankTurn);
         player.quat.premultiply(qBankYaw).normalize();
 
-        // Sync euler for reference
         player.euler.setFromQuaternion(player.quat, 'YXZ');
         player.pitch = player.euler.x;
         player.yaw = player.euler.y;
         player.roll = player.euler.z;
       }
 
-      // Hold Space (or touch FLAP) to keep flapping automatically as cooldown resets
-      if (!isAutoPilot && !player.isGrounded && !player.isFallingDazed && (keys['Space'] || touchFlapHeld) && player.flapCooldownTimer <= 0) {
+      if (!isAutoPilot && (keys['Space'] || touchFlapHeld) && player.flapCooldownTimer <= 0) {
         triggerFlap();
       }
 
-      if (!player.isGrounded && !player.isFallingDazed) {
-        // Brief free-fall drop right after stepping off a floating island ledge before spreading wings
-        if (player.ledgeDropTimer > 0) {
-          player.ledgeDropTimer = Math.max(0, player.ledgeDropTimer - dt);
-          player.verticalVel -= 18.0 * dt;
-          const ledgeFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-          player.pos.addScaledVector(ledgeFwd, player.speed * dt);
-          player.pos.y += player.verticalVel * dt;
-          if (player.ledgeDropTimer <= 0) {
-            player.verticalVel = 0;
-            player.speed = 24;
-            player.pitch = -0.18;
-            player.euler.set(player.pitch, player.yaw, 0, 'YXZ');
-            player.quat.setFromEuler(player.euler);
-          }
-        } else {
-          // Forward Boost (hold F or touch BOOST) to surge forward extra fast
-          const wantsBoost = !isAutoPilot && (keys['KeyF'] || touchBoostHeld);
-          if (wantsBoost && player.boostEnergy > 0.04) {
-            player.isBoosting = true;
-            player.boostEnergy = Math.max(0, player.boostEnergy - dt * 0.36);
-          } else {
-            player.isBoosting = false;
-            player.boostEnergy = Math.min(1.0, player.boostEnergy + dt * 0.22);
-          }
+      const forwardDir = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
+      const upVec = new THREE.Vector3(0, 1, 0).applyQuaternion(player.quat);
+      const pitchFactor = -forwardDir.y;
+      const effectiveMinSpeed = isBraking ? 4.5 : player.minSpeed;
 
-          // Balanced energy conservation: diving builds kinetic speed so swooping back up recovers ~starting altitude
-          const forwardDir = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-          const upVec = new THREE.Vector3(0, 1, 0).applyQuaternion(player.quat);
-          const cruiseSpeed = (player.isBoosting ? 74 : 36) * speedMultiplier;
-
-          if (player.flapEnergy > 0) {
-            player.flapEnergy = Math.max(0, player.flapEnergy - dt * 0.72);
-          }
-
-          // Gravity & forward boost acceleration along flight path
-          const boostAccel = player.isBoosting ? 58.0 : 0;
-          const gravityAccel = -forwardDir.y * 23.0 + player.flapEnergy * 13.5 + boostAccel;
-          player.speed += gravityAccel * dt;
-
-          // Air brake (Shift / B / BRAKE): spreads wings wide to decelerate smoothly to landing speed
-          if (isBraking) {
-            player.speed = THREE.MathUtils.lerp(player.speed, 11.5, 1 - Math.exp(-dt * 4.2));
-          } else if (player.isBoosting) {
-            player.speed = THREE.MathUtils.lerp(player.speed, cruiseSpeed, 1.8 * dt);
-          } else if (player.speed > 36 * speedMultiplier) {
-            // Only bleed excess speed above normal cruise; below cruise you must dive or flap to accelerate!
-            const overDrag = (1 - Math.abs(forwardDir.y)) * 0.65;
-            player.speed = THREE.MathUtils.lerp(player.speed, 36 * speedMultiplier, overDrag * dt);
-          }
-          player.speed = THREE.MathUtils.clamp(player.speed, player.minSpeed, player.maxSpeed);
-
-          // Stall nose-drop torque only kicks in once momentum runs low (speed < 24), letting swoops climb cleanly
-          if (!isAutoPilot && forwardDir.y > 0.08 && player.speed < 24) {
-            const stallFactor = THREE.MathUtils.clamp((24 - player.speed) / 14, 0, 1);
-            const stallRate = forwardDir.y * stallFactor * 1.65;
-            const worldRight = new THREE.Vector3().crossVectors(forwardDir, new THREE.Vector3(0, 1, 0));
-            if (worldRight.lengthSq() > 0.0001) {
-              worldRight.normalize();
-              const qTiltFlat = new THREE.Quaternion().setFromAxisAngle(worldRight, -stallRate * dt);
-              player.quat.premultiply(qTiltFlat).normalize();
-            }
-          }
-
-          // Smoothly ease flap lift in and out so there is zero sudden upward pop
-          player.smoothFlapLift = THREE.MathUtils.lerp(player.smoothFlapLift, player.flapEnergy, 1 - Math.exp(-dt * 3.2));
-
-          // Move forward along flight path
-          const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-          player.pos.addScaledVector(forward, player.speed * dt);
-
-          // Glider sink vs flap lift:
-          // Wings generate maximum lift when upright (upVec.y = 1), and lose lift when banked on their side or inverted
-          const uprightness = Math.max(0, upVec.y);
-          const levelWeight = 1 - Math.abs(forwardDir.y);
-          const sideSink = (1 - uprightness) * levelWeight * -5.2;
-          const stallSink = (forwardDir.y > 0.15 && player.speed < 20 && player.flapEnergy < 0.2)
-            ? -forwardDir.y * ((20 - player.speed) / 10) * 8.0
-            : 0;
-          const baseGlideSink = (isBraking ? -2.2 : -3.4) * levelWeight;
-          const flapLift = player.smoothFlapLift * 13.0 * (0.35 + 0.65 * uprightness);
-          player.pos.y += (baseGlideSink + sideSink + stallSink + flapLift) * dt;
-        }
-
-        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
-
-        // Check collision / landing with floating islands & normal ground
-        let inCave = false;
-        let caveFloorY = -999;
-        for (const cv of activeCaves) {
-          const dx = player.pos.x - cv.x;
-          const dz = player.pos.z - cv.z;
-          const lx = dx * cv.cosR - dz * cv.sinR;
-          const lz = dx * cv.sinR + dz * cv.cosR;
-          if (Math.abs(lx) < cv.halfWidth && Math.abs(lz) < cv.halfLen) {
-            inCave = true;
-            caveFloorY = cv.floorY;
-            break;
-          }
-        }
-
-        if (!isAutoPilot) {
-          const curUpVec = new THREE.Vector3(0, 1, 0).applyQuaternion(player.quat);
-          const isInvertedOrSideways = curUpVec.y < 0.35;
-
-          // 1) Floating island deck landing & side-on cliff/underside collision check
-          for (const isl of activeIslands) {
-            const horizDist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
-            if (horizDist <= isl.deckR && player.pos.y <= isl.deckY + 0.5 && player.pos.y >= isl.deckY - 1.6) {
-              player.isGrounded = true;
-              player.isHopping = false;
-              player.isDazed = isInvertedOrSideways; // Crash-landing upside down puts dove in stand mode with stars!
-              player.dazeTime = 0;
-              player.groundType = 'island';
-              player.pos.y = isl.deckY + 0.25;
-              player.speed = 0;
-              player.flapEnergy = 0;
-              player.smoothFlapLift = 0;
-              player.barrelRollDir = 0;
-              if (isInvertedOrSideways) playFlapSound();
-              break;
-            } else if (player.pos.y < isl.deckY - 0.8 && player.pos.y > isl.bottomY) {
-              // Tapered cone radius from the top rim down to the pointed underside
-              const tCone = THREE.MathUtils.clamp((player.pos.y - isl.bottomY) / Math.max(1, isl.deckY - isl.bottomY), 0, 1);
-              const coneR = isl.radius * (0.14 + 0.88 * tCone);
-              if (horizDist < coneR + 1.1) {
-                // Bounce cleanly outward away from the floating island cliff & begin slow dazed fall
-                const outwardAngle = horizDist > 0.01
-                  ? Math.atan2(player.pos.z - isl.z, player.pos.x - isl.x)
-                  : Math.atan2(-forward.z, -forward.x);
-                player.pos.x = isl.x + Math.cos(outwardAngle) * (coneR + 2.2);
-                player.pos.z = isl.z + Math.sin(outwardAngle) * (coneR + 2.2);
-                player.yaw = outwardAngle; // Drift away from the cliff so we don't re-enter the wall
-                player.isGrounded = false;
-                player.isFallingDazed = true;
-                player.isDazed = true;
-                player.isHopping = false;
-                player.ledgeDropTimer = 0;
-                player.dazeTime = 0;
-                player.verticalVel = 1.6; // Slight upward & outward bounce before drifting down
-                player.speed = 7.5;
-                player.flapEnergy = 0;
-                player.smoothFlapLift = 0;
-                player.barrelRollDir = 0;
-                playFlapSound();
-                break;
-              }
-            }
-          }
-
-          // 2) Normal ground / cave floor collision -> mountain side-on bonk vs gentle/inverted landing
-          if (!player.isGrounded && !player.isFallingDazed) {
-            const surf = getTerrainSurface(player.pos.x, player.pos.z);
-            const terrH = inCave ? caveFloorY : surf.height;
-            const ahead1 = getTerrainSurface(player.pos.x + forward.x * 2.2, player.pos.z + forward.z * 2.2);
-            const ahead2 = getTerrainSurface(player.pos.x + forward.x * 4.5, player.pos.z + forward.z * 4.5);
-            const aheadH = inCave ? caveFloorY : Math.max(ahead1.height, ahead2.height);
-            const riseAhead = aheadH - player.pos.y;
-
-            // Check if flying side-on / head-on into a steep mountain slope or cave wall
-            const hitSteepMountain = !inCave && terrH >= -17.6 && (
-              (player.pos.y <= terrH + 0.95 && (surf.normal.y < 0.88 || ahead1.normal.y < 0.88 || riseAhead > 0.75)) ||
-              (player.pos.y <= aheadH + 0.35 && riseAhead > 1.2)
-            );
-            let hitCaveWall = false;
-            let caveWallNormal = new THREE.Vector3();
-            for (const cv of activeCaves) {
-              const dx = player.pos.x - cv.x;
-              const dz = player.pos.z - cv.z;
-              const lx = dx * cv.cosR - dz * cv.sinR;
-              const lz = dx * cv.sinR + dz * cv.cosR;
-              if (Math.abs(lz) < cv.halfLen && Math.abs(lx) >= cv.halfWidth - 0.5 && Math.abs(lx) < cv.halfWidth + 7.5 && player.pos.y < cv.y + 17) {
-                hitCaveWall = true;
-                // Push inward into the tunnel if inside, or outward if hitting the outer mountain flank
-                const pushDirLocalX = Math.abs(lx) < cv.halfWidth + 1.5 ? (lx >= 0 ? -1 : 1) : (lx >= 0 ? 1 : -1);
-                caveWallNormal.set(pushDirLocalX * cv.cosR, 0, -pushDirLocalX * cv.sinR).normalize();
-                break;
-              }
-            }
-
-            if (hitSteepMountain || hitCaveWall) {
-              // Bounce outward off the mountain or cave wall so we drift down outside the geometry
-              const bounceNormal = hitCaveWall
-                ? caveWallNormal
-                : new THREE.Vector3(surf.normal.x, 0, surf.normal.z);
-              if (bounceNormal.lengthSq() < 0.001) {
-                bounceNormal.set(-forward.x, 0, -forward.z);
-              }
-              bounceNormal.normalize();
-
-              player.pos.x += bounceNormal.x * 2.4;
-              player.pos.z += bounceNormal.z * 2.4;
-              player.pos.y = Math.max(player.pos.y + 0.6, terrH + 1.1);
-              player.yaw = Math.atan2(-bounceNormal.x, -bounceNormal.z);
-              player.isGrounded = false;
-              player.isFallingDazed = true;
-              player.isDazed = true;
-              player.isHopping = false;
-              player.ledgeDropTimer = 0;
-              player.dazeTime = 0;
-              player.verticalVel = 1.6;
-              player.speed = 7.5;
-              player.flapEnergy = 0;
-              player.smoothFlapLift = 0;
-              player.barrelRollDir = 0;
-              playFlapSound();
-            } else if (terrH >= -17.6 && player.pos.y <= terrH + 0.65) {
-              // Touching down on the ground (even if flying upside down!) immediately transitions into stand mode
-              player.isGrounded = true;
-              player.isHopping = false;
-              player.isDazed = isInvertedOrSideways; // Upside-down floor crash gives dizzy stars!
-              player.dazeTime = 0;
-              player.groundType = 'terrain';
-              player.pos.y = terrH + 0.25;
-              player.speed = 0;
-              player.flapEnergy = 0;
-              player.smoothFlapLift = 0;
-              player.barrelRollDir = 0;
-              if (isInvertedOrSideways) playFlapSound();
-            } else if (terrH < -17.6 && player.pos.y < -17.2) {
-              player.pos.y = -17.2;
-            }
-          }
-        } else {
-          const minAutoY = Math.max(-18, getGroundHeight(player.pos.x, player.pos.z)) + 6.5;
-          if (player.pos.y < minAutoY) player.pos.y = minAutoY;
-        }
-
-        if (player.pos.y > 360) {
-          player.pos.y = 360;
-        }
-      } else {
-        player.isBoosting = false;
-        player.boostEnergy = Math.min(1.0, player.boostEnergy + dt * 0.35);
+      if (player.flapEnergy > 0) {
+        player.flapEnergy = Math.max(0, player.flapEnergy - dt * 0.72);
       }
 
-      // Update mesh transform
+      if (isBraking) {
+        player.speed = THREE.MathUtils.lerp(player.speed, effectiveMinSpeed, dt * 3.4);
+      } else if (player.isBoosting) {
+        const boostTarget = Math.min(player.maxSpeed * 1.18, 68 * speedMultiplier);
+        player.speed = THREE.MathUtils.lerp(player.speed, boostTarget, dt * 4.2);
+      } else {
+        if (pitchFactor > 0.04) {
+          const diveTarget = Math.min(player.maxSpeed, 36 * speedMultiplier + pitchFactor * 34);
+          if (player.speed < diveTarget) {
+            player.speed = THREE.MathUtils.lerp(player.speed, diveTarget, dt * 2.4);
+          }
+        }
+        if (player.flapEnergy > 0.05) {
+          const flapTarget = Math.min(player.maxSpeed, 34 * speedMultiplier + player.flapEnergy * 16);
+          if (player.speed < flapTarget) {
+            player.speed = THREE.MathUtils.lerp(player.speed, flapTarget, dt * 2.8);
+          }
+        }
+        if (forwardDir.y > 0.05) {
+          player.speed = Math.max(effectiveMinSpeed, player.speed - forwardDir.y * 34 * dt);
+        }
+        player.speed = Math.max(effectiveMinSpeed, player.speed - 0.14 * dt);
+      }
+
+      if (!isAutoPilot && forwardDir.y > 0.03) {
+        const speedNorm = THREE.MathUtils.clamp((player.speed - effectiveMinSpeed) / (player.maxSpeed - effectiveMinSpeed), 0, 1);
+        const stallRate = forwardDir.y * (0.9 + (1 - speedNorm) * 2.4);
+        const worldRight = new THREE.Vector3().crossVectors(forwardDir, new THREE.Vector3(0, 1, 0));
+        if (worldRight.lengthSq() > 0.0001) {
+          worldRight.normalize();
+          const qTiltFlat = new THREE.Quaternion().setFromAxisAngle(worldRight, -stallRate * dt);
+          player.quat.premultiply(qTiltFlat).normalize();
+        }
+      }
+
+      player.smoothFlapLift = THREE.MathUtils.lerp(player.smoothFlapLift, player.flapEnergy, 1 - Math.exp(-dt * 3.2));
+
+      const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
+      player.pos.addScaledVector(forward, player.speed * dt);
+
+      const uprightness = Math.max(0, upVec.y);
+      const sideSink = (1 - uprightness) * -6.5;
+      const stallSink = (forwardDir.y > 0.1 && player.flapEnergy < 0.25) ? -forwardDir.y * 12.0 : 0;
+      const baseGlideSink = isBraking ? -2.6 : -4.4;
+      const flapLift = player.smoothFlapLift * 12.5 * (0.35 + 0.65 * uprightness);
+      player.pos.y += (baseGlideSink + sideSink + stallSink + flapLift) * dt;
+
+      if (player.ledgeDropTimer > 0) {
+        player.ledgeDropTimer = Math.max(0, player.ledgeDropTimer - dt);
+        player.pos.y -= 9.5 * dt;
+      }
+
+      // 1) Floating island deck landing & cliff collision
+      if (!isAutoPilot) {
+        for (const isl of activeIslands) {
+          const dx = player.pos.x - isl.x;
+          const dz = player.pos.z - isl.z;
+          const hDist = Math.hypot(dx, dz);
+          const bottomY = isl.y - isl.underH - (isl.deckY - isl.y);
+
+          if (hDist < isl.deckR) {
+            const distToDeck = player.pos.y - isl.deckY;
+            if (distToDeck <= 0.45 && distToDeck >= -1.8) {
+              if (upVec.y < 0.45) {
+                triggerDazedFall(new THREE.Vector3(0, 1, 0));
+                setGroundedState(true, isl.deckY, isl, new THREE.Vector3(0, 1, 0));
+                player.isDazed = true;
+                player.dazeTime = 0;
+              } else {
+                setGroundedState(true, isl.deckY, isl, new THREE.Vector3(0, 1, 0));
+              }
+              break;
+            }
+          }
+
+          if (player.pos.y < isl.deckY - 0.5 && player.pos.y > bottomY) {
+            const t = THREE.MathUtils.clamp((player.pos.y - bottomY) / Math.max(1, isl.deckY - bottomY), 0, 1);
+            const rockR = isl.deckR * (0.14 + 0.86 * t) + 1.1;
+            if (hDist < rockR) {
+              const outX = hDist > 0.001 ? dx / hDist : 1;
+              const outZ = hDist > 0.001 ? dz / hDist : 0;
+              player.pos.x = isl.x + outX * (rockR + 0.4);
+              player.pos.z = isl.z + outZ * (rockR + 0.4);
+              triggerDazedFall(new THREE.Vector3(outX, 0.65, outZ).normalize());
+              break;
+            }
+          }
+        }
+      }
+
+      // 2) Normal ground / steep cliff collision
+      if (!player.isGrounded && !player.isFallingDazed) {
+        const surf = getTerrainSurface(player.pos.x, player.pos.z);
+        const groundY = Math.max(-18, surf.height);
+        const flatFwd = new THREE.Vector3(forward.x, 0, forward.z);
+        if (flatFwd.lengthSq() > 0.0001) flatFwd.normalize();
+        const aheadSurf = getTerrainSurface(player.pos.x + flatFwd.x * 2.4, player.pos.z + flatFwd.z * 2.4);
+        const aheadRise = aheadSurf.height - player.pos.y;
+
+        if (!isAutoPilot && surf.height > -18 && (aheadRise > 1.05 || (player.pos.y <= groundY + 1.1 && surf.normal.y < 0.72))) {
+          const bounceNorm = aheadSurf.normal.y < surf.normal.y ? aheadSurf.normal : surf.normal;
+          player.pos.x += bounceNorm.x * 1.4;
+          player.pos.z += bounceNorm.z * 1.4;
+          player.pos.y = Math.max(player.pos.y, groundY + 1.25);
+          triggerDazedFall(new THREE.Vector3(bounceNorm.x, 0.7, bounceNorm.z).normalize());
+        } else if (player.pos.y <= groundY + 0.35) {
+          if (isAutoPilot) {
+            player.pos.y = groundY + 6.5;
+          } else if (upVec.y < 0.45) {
+            const standNorm = surf.height > -18 ? surf.normal : new THREE.Vector3(0, 1, 0);
+            setGroundedState(true, groundY, null, standNorm);
+            player.isDazed = true;
+            player.dazeTime = 0;
+          } else {
+            const standNorm = surf.height > -18 ? surf.normal : new THREE.Vector3(0, 1, 0);
+            setGroundedState(true, groundY, null, standNorm);
+          }
+        }
+      }
+      if (player.pos.y > 750) {
+        player.pos.y = 750;
+      }
+
       player.group.position.copy(player.pos);
       player.group.quaternion.copy(player.quat);
 
-      if (player.isGrounded) {
-        // Standing dove silhouette: hide spread flight wings and show neatly tucked folded wings
-        player.leftWing.visible = false;
-        player.rightWing.visible = false;
-        if (player.foldedWings) player.foldedWings.visible = true;
-        // Slim down the fanned flight tail into a neat, narrow standing dove tail
-        if (player.tailGroup) player.tailGroup.scale.set(0.42, 0.85, 0.92);
-
-        if (player.dazeGroup) {
-          player.dazeGroup.visible = player.isDazed;
-          if (player.isDazed) {
-            player.dazeGroup.rotation.y += dt * 4.5;
-            player.dazeGroup.position.y = 0.52 + Math.sin(player.dazeTime * 6) * 0.04;
-          }
-        }
-
-        const isWalking = player.speed > 0.2;
-        if (isWalking) player.walkPhase += dt * 14;
-
-        if (player.leftLeg && player.rightLeg) {
-          player.leftLeg.visible = true;
-          player.rightLeg.visible = true;
-          player.leftLeg.rotation.x = isWalking ? Math.sin(player.walkPhase) * 0.55 : 0;
-          player.rightLeg.rotation.x = isWalking ? -Math.sin(player.walkPhase) * 0.55 : 0;
-        }
-      } else if (player.isFallingDazed) {
-        // Slow dazed fall: wings limp/fluttering slightly and dizzy stars spinning above head
-        player.leftWing.visible = true;
-        player.rightWing.visible = true;
-        if (player.foldedWings) player.foldedWings.visible = false;
-        if (player.tailGroup) player.tailGroup.scale.set(1, 1, 1);
-        if (player.dazeGroup) {
-          player.dazeGroup.visible = true;
-          player.dazeGroup.rotation.y += dt * 4.5;
-          player.dazeGroup.position.y = 0.52 + Math.sin(player.dazeTime * 6) * 0.04;
-        }
-        const limpFlutter = Math.sin(player.dazeTime * 11) * 0.22;
-        player.leftWing.rotation.set(0.15, -0.2, 0.48 + limpFlutter);
-        player.rightWing.rotation.set(0.15, 0.2, -0.48 - limpFlutter);
-        player.leftTip.rotation.set(0, 0, 0.35);
-        player.rightTip.rotation.set(0, 0, -0.35);
-        if (player.leftLeg && player.rightLeg) {
-          player.leftLeg.rotation.x = 0.25;
-          player.rightLeg.rotation.x = 0.25;
-        }
-      } else if (player.ledgeDropTimer > 0) {
-        // Brief free-fall drop off a ledge with wings still folded before spreading them to fly
-        player.leftWing.visible = false;
-        player.rightWing.visible = false;
-        if (player.foldedWings) player.foldedWings.visible = true;
-        if (player.tailGroup) player.tailGroup.scale.set(0.55, 0.9, 0.95);
-        if (player.dazeGroup) player.dazeGroup.visible = false;
-      } else {
-        player.leftWing.visible = true;
-        player.rightWing.visible = true;
-        if (player.foldedWings) player.foldedWings.visible = false;
-        if (player.tailGroup) player.tailGroup.scale.set(1, 1, 1);
-        if (player.dazeGroup) player.dazeGroup.visible = false;
-
-        // Continuous, seamless wing flapping when holding Space (1 full 2*PI cycle = FLAP_COOLDOWN)
+      if (!player.isGrounded && !player.isFallingDazed) {
+        const isDroppingOffLedge = player.ledgeDropTimer > 0;
         const isHoldingFlap = !isAutoPilot && (keys['Space'] || touchFlapHeld);
-        const isFlapping = isHoldingFlap || player.flapEnergy > 0.05 || player.flapCooldownTimer > 0;
+        const isFlapping = !isDroppingOffLedge && (isHoldingFlap || player.flapEnergy > 0.05 || player.flapCooldownTimer > 0);
         const flapFreq = (Math.PI * 2) / FLAP_COOLDOWN;
         player.flapPhase += dt * (isFlapping ? flapFreq : 1.5);
         const flapAmp = isFlapping
           ? Math.min(0.92, 0.78 * Math.max(player.smoothFlapLift, isHoldingFlap ? 0.75 : 0) + 0.16)
-          : 0.07;
-        const tuck = player.isBoosting ? 0.62 : 0;
-        const brakeFlare = isBraking ? 0.34 : 0;
-        const wingAngle = Math.sin(player.flapPhase) * flapAmp * (player.isBoosting ? 0.45 : 1);
+          : (isDroppingOffLedge ? 0.03 : 0.07);
+        const wingAngle = isDroppingOffLedge ? 0.42 : Math.sin(player.flapPhase) * flapAmp;
 
-        // Positive Z rotation moves leftWing (-X) DOWN; negative Z moves rightWing (+X) DOWN
-        player.leftWing.rotation.z = wingAngle + tuck * 0.22 - brakeFlare * 0.28;
-        player.rightWing.rotation.z = -wingAngle - tuck * 0.22 + brakeFlare * 0.28;
-        player.leftWing.rotation.y = tuck * 0.45 - brakeFlare * 0.35;
-        player.rightWing.rotation.y = -tuck * 0.45 + brakeFlare * 0.35;
-        player.leftWing.rotation.x = brakeFlare * 0.45;
-        player.rightWing.rotation.x = brakeFlare * 0.45;
+        const brakeSweep = isBraking ? 0.28 : 0;
+        const brakePitch = isBraking ? -0.45 : 0;
+        const boostSweep = player.isBoosting ? -0.35 : 0;
+        player.leftWing.rotation.set(brakePitch, brakeSweep + boostSweep, wingAngle - (isBraking ? 0.18 : 0));
+        player.rightWing.rotation.set(brakePitch, -brakeSweep - boostSweep, -wingAngle + (isBraking ? 0.18 : 0));
         player.leftTip.rotation.z = wingAngle * 0.65;
         player.rightTip.rotation.z = -wingAngle * 0.65;
-        player.leftTip.rotation.y = 0;
-        player.rightTip.rotation.y = 0;
-
-        if (player.leftLeg && player.rightLeg) {
-          player.leftLeg.rotation.x = isBraking ? 0.15 : -0.65; // Lower landing gear when air-braking!
-          player.rightLeg.rotation.x = isBraking ? 0.15 : -0.65;
-        }
       }
 
-      // Update wingtip contrails (hide while walking on ground)
-      player.trailLeft.line.visible = !player.isGrounded;
-      player.trailRight.line.visible = !player.isGrounded;
       player.group.updateMatrixWorld();
       const lTipPos = new THREE.Vector3(-3.0, 0, 0.35).applyMatrix4(player.group.matrixWorld);
       const rTipPos = new THREE.Vector3(3.0, 0, 0.35).applyMatrix4(player.group.matrixWorld);
       updateTrail(player.trailLeft, lTipPos);
       updateTrail(player.trailRight, rTipPos);
 
-      // Check Ring Collection
       for (const r of activeRings) {
         r.mesh.rotation.z += dt * 1.2;
         if (!r.collected && r.pos.distanceTo(player.pos) < 8.5) {
@@ -2276,15 +2431,13 @@
         }
       }
 
-      // Update Wind Audio
       if (audio.initialized && audio.windGain && audio.windFilter) {
-        const normSpd = (player.speed - player.minSpeed) / (player.maxSpeed - player.minSpeed);
+        const normSpd = Math.max(0, (player.speed - player.minSpeed) / (player.maxSpeed - player.minSpeed));
         const targetGain = isMuted ? 0 : 0.04 + normSpd * 0.14;
         audio.windGain.gain.setTargetAtTime(targetGain, audio.ctx.currentTime, 0.1);
         audio.windFilter.frequency.setTargetAtTime(220 + normSpd * 620, audio.ctx.currentTime, 0.1);
       }
 
-      // Update flap cooldown timer & HUD bar
       if (player.flapCooldownTimer > 0) {
         player.flapCooldownTimer = Math.max(0, player.flapCooldownTimer - dt);
       }
@@ -2299,8 +2452,8 @@
       const boostBar = document.getElementById('hud-boost-bar');
       if (boostBar) {
         boostBar.style.width = `${(player.boostEnergy * 100).toFixed(0)}%`;
-        boostBar.className = player.isBoosting
-          ? 'block h-full bg-orange-400 transition-all duration-75'
+        boostBar.className = player.boostCooldownTimer > 0
+          ? 'block h-full bg-slate-400 transition-all duration-75'
           : 'block h-full bg-amber-400 transition-all duration-75';
       }
       const touchFlapBtn = document.getElementById('btn-touch-flap');
@@ -2308,26 +2461,49 @@
         touchFlapBtn.style.opacity = player.flapCooldownTimer > 0 ? '0.5' : '1';
       }
 
-      // Update HUD readouts
       document.getElementById('hud-speed').textContent = Math.round(player.speed * 2.4);
       document.getElementById('hud-alt').textContent = Math.round(player.pos.y);
     }
 
     function triggerFlap() {
-      if (!isStarted || player.flapCooldownTimer > 0) return;
+      if (!isStarted) return;
+
+      if (player.isFallingDazed) {
+        player.isFallingDazed = false;
+        player.isDazed = false;
+        player.speed = 24;
+        player.flapCooldownTimer = FLAP_COOLDOWN;
+        player.flapPhase = 0;
+        player.flapEnergy = 0.9;
+        playFlapSound();
+        return;
+      }
+
+      if (player.isGrounded) {
+        player.isDazed = false;
+        if (!player.isHopping) {
+          player.isHopping = true;
+          player.hopVelY = 10.5;
+          playFlapSound();
+          return;
+        }
+        setGroundedState(false, player.pos.y);
+        player.pos.y += 1.4;
+        player.speed = 26;
+        player.flapCooldownTimer = FLAP_COOLDOWN;
+        player.flapPhase = 0;
+        player.flapEnergy = 0.95;
+        playFlapSound();
+        return;
+      }
+
+      if (player.flapCooldownTimer > 0) return;
       const wasIdle = player.flapEnergy <= 0.05 && player.flapCooldownTimer <= 0;
       player.flapCooldownTimer = FLAP_COOLDOWN;
       if (wasIdle) {
-        player.flapPhase = 0; // Start from 0 when beginning from glide so wings sweep DOWN first
+        player.flapPhase = 0;
       }
       player.flapEnergy = Math.min(1.15, player.flapEnergy + 0.85);
-      playFlapSound();
-    }
-
-    function triggerBarrelRoll(dir) {
-      if (!isStarted || player.barrelRollDir !== 0) return;
-      player.barrelRollDir = dir; // +1 = left, -1 = right
-      player.barrelRollProgress = 0;
       playFlapSound();
     }
 
@@ -2336,76 +2512,67 @@
       const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
       const up = new THREE.Vector3(0, 1, 0).applyQuaternion(player.quat);
 
-      // Dynamic FOV boost with speed
-      const speedBoostFov = ((player.speed - player.minSpeed) / (player.maxSpeed - player.minSpeed)) * 12;
+      const speedBoostFov = Math.max(0, ((player.speed - player.minSpeed) / (player.maxSpeed - player.minSpeed)) * 12) + (player.isBoosting ? 7 : 0);
       camera.fov = THREE.MathUtils.lerp(camera.fov, baseFov + speedBoostFov, dt * 4);
       camera.updateProjectionMatrix();
 
       let desiredPos = new THREE.Vector3();
       let desiredLook = new THREE.Vector3();
 
-      if (player.isGrounded) {
-        // Close third-person standing camera that orbits with the mouse and stays smooth while walking
+      if (player.isGrounded && !isAutoPilot) {
         player.group.visible = true;
-        const isMovingOnGround = player.speed > 0.25 || player.isHopping || Math.abs(keys['KeyA'] ? 1 : 0) + Math.abs(keys['KeyD'] ? 1 : 0) > 0;
-        if (isMovingOnGround && !camState.standOrbiting) {
-          camState.standYawOffset = THREE.MathUtils.lerp(camState.standYawOffset, 0, 1 - Math.exp(-dt * 4.5));
-          camState.standPitchOffset = THREE.MathUtils.lerp(camState.standPitchOffset, 0.28, 1 - Math.exp(-dt * 4.5));
+        const isWalking = Math.abs(keys['KeyW'] || keys['ArrowUp'] ? 1 : 0) +
+                          Math.abs(keys['KeyS'] || keys['ArrowDown'] ? 1 : 0) +
+                          Math.abs(keys['KeyA'] || keys['ArrowLeft'] ? 1 : 0) +
+                          Math.abs(keys['KeyD'] || keys['ArrowRight'] ? 1 : 0) +
+                          (touchSteer.active ? 1 : 0) > 0;
+        if (isWalking && !pointerSteer.active) {
+          const recenterEase = 1 - Math.exp(-dt * 4.5);
+          camState.standYawOffset = THREE.MathUtils.lerp(camState.standYawOffset, 0, recenterEase);
+          camState.standPitchOffset = THREE.MathUtils.lerp(camState.standPitchOffset, 0.22, recenterEase);
         }
 
         const camYaw = player.yaw + camState.standYawOffset;
-        const horizScale = Math.cos(camState.standPitchOffset);
-        const vertScale = Math.sin(camState.standPitchOffset);
-        const flatBack = new THREE.Vector3(Math.sin(camYaw) * horizScale, 0, Math.cos(camYaw) * horizScale);
-        const flatForward = new THREE.Vector3(-Math.sin(player.yaw), 0, -Math.cos(player.yaw));
-        const maxCamDist = 3.6;
-        const baseCamH = 0.72 + maxCamDist * vertScale;
+        const camPitch = camState.standPitchOffset;
+        const horizDist = Math.cos(camPitch) * camState.standDist;
+        const vertDist = Math.sin(camPitch) * camState.standDist + 0.65;
+        const backX = Math.sin(camYaw);
+        const backZ = Math.cos(camYaw);
 
-        // Smooth continuous check along the camera arm (only pulls in for actual walls/caves, not gentle hill slopes)
-        let safeDist = maxCamDist;
-        const samples = 12;
-        for (let step = 1; step <= samples; step++) {
-          const d = (step / samples) * maxCamDist;
-          const testX = player.pos.x + flatBack.x * d;
-          const testZ = player.pos.z + flatBack.z * d;
-          const testY = player.pos.y + baseCamH * (step / samples);
+        desiredPos.set(
+          player.pos.x + backX * horizDist,
+          player.pos.y + vertDist,
+          player.pos.z + backZ * horizDist
+        );
 
-          // Only pull camera inward if a steep cliff wall rises above the camera's sightline
-          const terrH = getGroundHeight(testX, testZ);
-          if (terrH > testY + 0.15) {
-            safeDist = Math.min(safeDist, Math.max(1.35, d - 0.3));
-            break;
-          }
+        const groundAtCam = Math.max(-18, getGroundHeight(desiredPos.x, desiredPos.z)) + 1.05;
+        if (desiredPos.y < groundAtCam) {
+          desiredPos.y = groundAtCam;
+        }
 
-          // Check cave wall intersection
-          for (const cv of activeCaves) {
-            const dx = testX - cv.x;
-            const dz = testZ - cv.z;
-            const lx = dx * cv.cosR - dz * cv.sinR;
-            const lz = dx * cv.sinR + dz * cv.cosR;
-            if (Math.abs(lz) < cv.halfLen && Math.abs(lx) >= cv.halfWidth - 0.6 && Math.abs(lx) < cv.halfWidth + 6 && testY < cv.y + 16) {
-              safeDist = Math.min(safeDist, Math.max(1.35, d - 0.3));
-              break;
+        for (const isl of activeIslands) {
+          const dx = desiredPos.x - isl.x;
+          const dz = desiredPos.z - isl.z;
+          const hDist = Math.hypot(dx, dz);
+          const bottomY = isl.y - isl.underH - (isl.deckY - isl.y);
+          if (hDist < isl.deckR + 1.2 && desiredPos.y < isl.deckY + 0.7 && desiredPos.y > bottomY) {
+            if (player.pos.y >= isl.deckY - 0.5) {
+              desiredPos.y = Math.max(desiredPos.y, isl.deckY + 0.85);
+            } else if (hDist > 0.001) {
+              desiredPos.x = isl.x + (dx / hDist) * (isl.deckR + 1.3);
+              desiredPos.z = isl.z + (dz / hDist) * (isl.deckR + 1.3);
             }
           }
         }
 
-        desiredPos.copy(player.pos).addScaledVector(flatBack, safeDist);
-        const groundAtCam = getGroundHeight(desiredPos.x, desiredPos.z);
-        // Smoothly lift camera slightly above uphill terrain behind the dove without changing distance
-        const minCamY = player.pos.y + baseCamH;
-        const slopeLift = Math.max(0, (groundAtCam + 0.75) - minCamY);
-        desiredPos.y = minCamY + slopeLift;
-
-        desiredLook.copy(player.pos).addScaledVector(flatForward, 1.0 * (1 - Math.min(1, Math.abs(camState.standYawOffset))));
-        desiredLook.y += 0.45;
-        camState.pos.lerp(desiredPos, 1 - Math.exp(-dt * 9.0));
-        camState.lookAt.lerp(desiredLook, 1 - Math.exp(-dt * 12.0));
+        desiredLook.set(
+          player.pos.x - Math.sin(camYaw) * 1.4,
+          player.pos.y + 0.42,
+          player.pos.z - Math.cos(camYaw) * 1.4
+        );
+        camState.pos.lerp(desiredPos, 1 - Math.exp(-dt * 12));
+        camState.lookAt.lerp(desiredLook, 1 - Math.exp(-dt * 15));
       } else if (cameraMode === 0) {
-        // Reset any standing orbit offset smoothly once airborne
-        camState.standYawOffset = 0;
-        camState.standPitchOffset = 0.28;
-        // Cinematic Follow: lags behind turns so when spinning it frames beside you, then slowly glides back behind
         player.group.visible = true;
         camState.laggedDir.lerp(forward, 1 - Math.exp(-dt * 1.35)).normalize();
         desiredPos.copy(player.pos).addScaledVector(camState.laggedDir, -10.5);
@@ -2414,14 +2581,12 @@
         camState.pos.lerp(desiredPos, 1 - Math.exp(-dt * 7.5));
         camState.lookAt.lerp(desiredLook, 1 - Math.exp(-dt * 9.0));
       } else if (cameraMode === 1) {
-        // Smooth Chase Cam
         player.group.visible = true;
         desiredPos.copy(player.pos).addScaledVector(forward, -10.5).addScaledVector(up, 3.4);
         desiredLook.copy(player.pos).addScaledVector(forward, 16);
         camState.pos.lerp(desiredPos, 1 - Math.exp(-dt * 6.5));
         camState.lookAt.lerp(desiredLook, 1 - Math.exp(-dt * 9.0));
       } else if (cameraMode === 2) {
-        // Cinematic Drone Orbit
         player.group.visible = true;
         camState.orbitAngle += dt * 0.25;
         const ox = Math.cos(camState.orbitAngle) * 13;
@@ -2431,14 +2596,12 @@
         camState.pos.lerp(desiredPos, 1 - Math.exp(-dt * 5.0));
         camState.lookAt.lerp(desiredLook, 1 - Math.exp(-dt * 7.0));
       } else if (cameraMode === 3) {
-        // First-Person Wing POV
         player.group.visible = false;
         desiredPos.copy(player.pos).addScaledVector(forward, 0.6).addScaledVector(up, 0.35);
         desiredLook.copy(player.pos).addScaledVector(forward, 30);
         camState.pos.copy(desiredPos);
         camState.lookAt.copy(desiredLook);
       } else if (cameraMode === 4) {
-        // Low-Angle Hero Cam
         player.group.visible = true;
         desiredPos.copy(player.pos).addScaledVector(forward, -8.5).addScaledVector(up, -2.1);
         desiredLook.copy(player.pos).addScaledVector(forward, 12).addScaledVector(up, 1.8);
@@ -2462,14 +2625,15 @@
       requestAnimationFrame(animate);
       const dt = Math.min(0.05, (now - lastTime) / 1000 || 0.016);
       lastTime = now;
+      const elapsed = now * 0.001;
 
       if (isStarted) {
         updatePlayer(dt);
         updateChunks();
         updateWindParticles();
-        updateAmbientFlocks(dt);
+        updateAmbientFlocks(dt, elapsed);
+        updateWeatherEffects(dt);
       } else {
-        // Gentle idle flyover behind start overlay
         player.yaw += dt * 0.08;
         player.euler.set(0, player.yaw, 0, 'YXZ');
         player.quat.setFromEuler(player.euler);
@@ -2478,7 +2642,7 @@
         player.group.position.copy(player.pos);
         player.group.quaternion.copy(player.quat);
         updateChunks();
-        updateAmbientFlocks(dt);
+        updateAmbientFlocks(dt, elapsed);
       }
 
       updateCamera(dt);
@@ -2522,10 +2686,6 @@
           document.getElementById('cam-label').textContent = CAMERA_MODES[cameraMode];
         } else if (e.code === 'KeyP' && !e.repeat) {
           setAutoPilot(!isAutoPilot);
-        } else if (e.code === 'KeyQ' && !e.repeat) {
-          triggerBarrelRoll(1);
-        } else if (e.code === 'KeyE' && !e.repeat) {
-          triggerBarrelRoll(-1);
         } else if (e.code === 'KeyM' && !e.repeat) {
           document.getElementById('btn-mute').click();
         }
@@ -2535,46 +2695,38 @@
         keys[e.code] = false;
       });
 
-      // Smooth relative mouse drag steering on canvas (or free camera orbit when standing)
       const container = document.getElementById('canvas-container');
       let pointerOrigin = { x: 0, y: 0 };
+      let standOriginYaw = 0;
+      let standOriginPitch = 0.22;
       container.addEventListener('pointerdown', (e) => {
         if (!isStarted) return;
         initAudio();
         pointerSteer.active = true;
         pointerOrigin.x = e.clientX;
         pointerOrigin.y = e.clientY;
-        pointerSteer.lastX = e.clientX;
-        pointerSteer.lastY = e.clientY;
         pointerSteer.x = 0;
         pointerSteer.y = 0;
-        if (player.isGrounded) {
-          camState.standOrbiting = true;
-        }
+        standOriginYaw = camState.standYawOffset;
+        standOriginPitch = camState.standPitchOffset;
       });
       window.addEventListener('pointermove', (e) => {
         if (!pointerSteer.active) return;
-        if (player.isGrounded) {
-          const dx = e.clientX - pointerSteer.lastX;
-          const dy = e.clientY - pointerSteer.lastY;
-          pointerSteer.lastX = e.clientX;
-          pointerSteer.lastY = e.clientY;
-          camState.standYawOffset -= dx * 0.0075;
-          camState.standPitchOffset = THREE.MathUtils.clamp(camState.standPitchOffset + dy * 0.006, 0.05, 0.95);
-          return;
+        const dx = e.clientX - pointerOrigin.x;
+        const dy = e.clientY - pointerOrigin.y;
+        if (player.isGrounded && !isAutoPilot) {
+          camState.standYawOffset = standOriginYaw - dx * 0.0065;
+          camState.standPitchOffset = THREE.MathUtils.clamp(standOriginPitch + dy * 0.005, -0.15, 1.15);
+        } else {
+          const maxDrag = Math.min(window.innerWidth, window.innerHeight) * 0.28;
+          pointerSteer.x = THREE.MathUtils.clamp(dx / maxDrag, -1, 1);
+          pointerSteer.y = THREE.MathUtils.clamp(dy / maxDrag, -1, 1);
         }
-        const maxDrag = Math.min(window.innerWidth, window.innerHeight) * 0.28;
-        pointerSteer.x = THREE.MathUtils.clamp((e.clientX - pointerOrigin.x) / maxDrag, -1, 1);
-        pointerSteer.y = THREE.MathUtils.clamp((e.clientY - pointerOrigin.y) / maxDrag, -1, 1);
       });
       window.addEventListener('pointerup', () => {
         pointerSteer.active = false;
-        camState.standOrbiting = false;
         pointerSteer.x = 0;
         pointerSteer.y = 0;
-      });
-      window.addEventListener('blur', () => {
-        for (const k in keys) keys[k] = false;
       });
 
       // Mobile touch joystick
@@ -2608,10 +2760,13 @@
         knob.style.transform = `translate(${dx * 28}px, ${dy * 28}px)`;
       }
 
-      document.getElementById('btn-touch-roll').addEventListener('click', () => {
+      const boostBtn = document.getElementById('btn-touch-boost');
+      boostBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
         initAudio();
-        triggerBarrelRoll(1);
-      });
+        touchBoostHeld = true;
+      }, { passive: false });
+      boostBtn.addEventListener('touchend', () => { touchBoostHeld = false; });
       const flapBtn = document.getElementById('btn-touch-flap');
       flapBtn.addEventListener('click', () => {
         initAudio();
@@ -2624,15 +2779,9 @@
         triggerFlap();
       }, { passive: false });
       flapBtn.addEventListener('touchend', () => { touchFlapHeld = false; });
-      const diveBtn = document.getElementById('btn-touch-dive');
-      diveBtn.addEventListener('touchstart', (e) => { e.preventDefault(); touchDive = true; }, { passive: false });
-      diveBtn.addEventListener('touchend', () => { touchDive = false; });
-
-      const boostBtn = document.getElementById('btn-touch-boost');
-      boostBtn.addEventListener('touchstart', (e) => { e.preventDefault(); initAudio(); touchBoostHeld = true; }, { passive: false });
-      boostBtn.addEventListener('touchend', () => { touchBoostHeld = false; });
-      boostBtn.addEventListener('mousedown', () => { initAudio(); touchBoostHeld = true; });
-      boostBtn.addEventListener('mouseup', () => { touchBoostHeld = false; });
+      const brakeBtn = document.getElementById('btn-touch-brake');
+      brakeBtn.addEventListener('touchstart', (e) => { e.preventDefault(); touchBrake = true; }, { passive: false });
+      brakeBtn.addEventListener('touchend', () => { touchBrake = false; });
 
       // Top bar buttons
       document.getElementById('btn-autopilot').addEventListener('click', () => setAutoPilot(!isAutoPilot));
@@ -2710,7 +2859,6 @@
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       container.appendChild(renderer.domElement);
 
-      // Lighting
       hemiLight = new THREE.HemisphereLight(0xffb780, 0x2b2d42, 0.85);
       scene.add(hemiLight);
 
@@ -2718,8 +2866,7 @@
       sunLight.position.set(160, 220, 120);
       scene.add(sunLight);
 
-      // Shimmering Water / Mist Floor in Deep Valleys
-      const seaGeo = new THREE.PlaneGeometry(3200, 3200, 1, 1);
+      const seaGeo = new THREE.PlaneGeometry(1150, 1150, 1, 1);
       seaGeo.rotateX(-Math.PI / 2);
       const seaMat = new THREE.MeshBasicMaterial({ color: 0x457b9d, transparent: true, opacity: 0.72 });
       cloudSeaMesh = new THREE.Mesh(seaGeo, seaMat);
@@ -2731,6 +2878,7 @@
       createPlayer();
       createWindParticles();
       createAmbientFlocks();
+      createWeatherEffects();
       applyTheme(0);
       document.getElementById('seed-label').textContent = worldSeed;
       updateChunks();
