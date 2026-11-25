@@ -358,9 +358,11 @@
     const activeRings = [];
     const activeIslands = [];
     const activeStorms = [];
+    const activeVines = [];
+    const activeCritters = [];
 
     // Shared Materials & Geometries
-    let matGrass, matRock, matDirt, matTrunk, matLeaves, matCrystal, matWater, matCloud, matStormCloud, matRing, matGround;
+    let matGrass, matRock, matDirt, matTrunk, matLeaves, matCrystal, matWater, matCloud, matStormCloud, matRing, matGround, matVine, matFoam;
     let geoBox, geoCone, geoOcta, geoRing, geoSphere;
 
     const FLAP_COOLDOWN = 1.4;
@@ -380,6 +382,8 @@
       smoothPitchInput: 0,
       flapEnergy: 0,
       smoothFlapLift: 0,
+      diveMomentum: 0,
+      diveDropAltitude: 0,
       flapPhase: 0,
       flapCooldownTimer: 0,
       boostEnergy: 1.0,
@@ -397,6 +401,7 @@
       walkPhase: 0,
       dazeTime: 0,
       landedIsland: null,
+      landedVine: null,
       group: null,
       leftWing: null,
       rightWing: null,
@@ -622,6 +627,16 @@
         vertexColors: true,
         roughness: 0.92,
         flatShading: true
+      });
+      matVine = new THREE.MeshStandardMaterial({
+        color: 0x386641,
+        roughness: 0.85,
+        flatShading: true
+      });
+      matFoam = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.65
       });
 
       geoBox = new THREE.BoxGeometry(1, 1, 1);
@@ -896,6 +911,337 @@
         if (pos[i + 2] - pz < -90) pos[i + 2] += 180;
       }
       windParticles.geometry.attributes.position.needsUpdate = true;
+    }
+
+    // --- Water Skimming Wake, Shoreline Waves & Foam ---
+    const waterWakePool = [];
+    const shoreFoamMeshes = [];
+    let wakeSpawnTimer = 0;
+
+    function createWaterEffects() {
+      // Pooled expanding wake rings & spray droplets when skimming close to the water
+      const ringGeo = new THREE.RingGeometry(0.45, 0.85, 18);
+      ringGeo.rotateX(-Math.PI / 2);
+      for (let i = 0; i < 28; i++) {
+        const mesh = new THREE.Mesh(
+          ringGeo,
+          new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0, side: THREE.DoubleSide })
+        );
+        mesh.visible = false;
+        mesh.position.y = -17.85;
+        scene.add(mesh);
+        waterWakePool.push({ mesh, age: 0, maxAge: 1.25, active: false });
+      }
+
+      // Ambient little wave crests & shoreline foam patches around the player
+      const waveGeo = new THREE.PlaneGeometry(3.4, 0.55);
+      waveGeo.rotateX(-Math.PI / 2);
+      for (let i = 0; i < 95; i++) {
+        const isShoreFoam = i < 55;
+        const m = new THREE.Mesh(
+          waveGeo,
+          new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: isShoreFoam ? 0.58 : 0.34,
+            side: THREE.DoubleSide
+          })
+        );
+        m.position.set((Math.random() - 0.5) * 260, -17.88, (Math.random() - 0.5) * 260);
+        m.rotation.y = Math.random() * Math.PI * 2;
+        scene.add(m);
+        shoreFoamMeshes.push({
+          mesh: m,
+          phase: Math.random() * Math.PI * 2,
+          isShore: isShoreFoam
+        });
+      }
+    }
+
+    function spawnWaterWake(x, z) {
+      const slot = waterWakePool.find(w => !w.active);
+      if (!slot) return;
+      slot.active = true;
+      slot.age = 0;
+      slot.maxAge = 1.05 + Math.random() * 0.35;
+      slot.mesh.position.set(x, -17.86, z);
+      slot.mesh.scale.setScalar(0.8);
+      slot.mesh.material.opacity = 0.78;
+      slot.mesh.visible = true;
+    }
+
+    function updateWaterEffects(dt, elapsed) {
+      // Gentle animated ripple on the main water surface
+      if (cloudSeaMesh) {
+        cloudSeaMesh.position.y = -18 + Math.sin(elapsed * 1.8) * 0.16;
+      }
+
+      // Check if dove is skimming low over water
+      const groundAtPlayer = getGroundHeight(player.pos.x, player.pos.z);
+      const heightAboveWater = player.pos.y - (-18);
+      if (!player.isGrounded && !player.isFallingDazed && groundAtPlayer < -17.5 && heightAboveWater > 0.2 && heightAboveWater < 6.5 && player.speed > 12) {
+        wakeSpawnTimer -= dt;
+        if (wakeSpawnTimer <= 0) {
+          wakeSpawnTimer = 0.045;
+          const right = new THREE.Vector3(1, 0, 0).applyQuaternion(player.quat);
+          right.y = 0;
+          if (right.lengthSq() > 0.001) right.normalize();
+          const spread = Math.max(0.4, 1.35 - heightAboveWater * 0.15);
+          spawnWaterWake(player.pos.x + right.x * spread, player.pos.z + right.z * spread);
+          spawnWaterWake(player.pos.x - right.x * spread, player.pos.z - right.z * spread);
+        }
+      }
+
+      for (const w of waterWakePool) {
+        if (!w.active) continue;
+        w.age += dt;
+        const t = w.age / w.maxAge;
+        if (t >= 1) {
+          w.active = false;
+          w.mesh.visible = false;
+        } else {
+          const sc = 0.8 + t * 5.2;
+          w.mesh.scale.setScalar(sc);
+          w.mesh.position.y = -17.84 + Math.sin(elapsed * 2.5 + t * 4) * 0.08;
+          w.mesh.material.opacity = (1 - t) * 0.72;
+        }
+      }
+
+      // Update shoreline foam & little surface waves near the water's edge
+      const px = player.pos.x;
+      const pz = player.pos.z;
+      const waterY = cloudSeaMesh ? cloudSeaMesh.position.y + 0.08 : -17.92;
+      for (const item of shoreFoamMeshes) {
+        const m = item.mesh;
+        if (Math.abs(m.position.x - px) > 130 || Math.abs(m.position.z - pz) > 130) {
+          if (item.isShore) {
+            // Search nearby for a shoreline transition where terrain crosses y = -18
+            let found = false;
+            for (let attempt = 0; attempt < 6; attempt++) {
+              const tx = px + (Math.random() - 0.5) * 240;
+              const tz = pz + (Math.random() - 0.5) * 240;
+              const gh = getGroundHeight(tx, tz);
+              if (gh > -19.2 && gh < -16.8) {
+                const eps = 2.0;
+                const gx = getGroundHeight(tx + eps, tz) - getGroundHeight(tx - eps, tz);
+                const gz = getGroundHeight(tx, tz + eps) - getGroundHeight(tx, tz - eps);
+                m.position.set(tx, waterY, tz);
+                m.rotation.y = Math.atan2(gx, gz);
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              m.position.set(px + (Math.random() - 0.5) * 240, waterY, pz + (Math.random() - 0.5) * 240);
+            }
+          } else {
+            m.position.set(px + (Math.random() - 0.5) * 240, waterY, pz + (Math.random() - 0.5) * 240);
+          }
+        }
+
+        const gh = getGroundHeight(m.position.x, m.position.z);
+        if (item.isShore) {
+          const nearEdge = gh > -19.6 && gh < -16.4;
+          m.visible = nearEdge;
+          if (nearEdge) {
+            const pulse = 0.75 + Math.sin(elapsed * 2.6 + item.phase) * 0.35;
+            m.scale.set(pulse * 1.3, 1, pulse);
+            m.position.y = waterY + 0.04;
+            m.material.opacity = 0.35 + Math.sin(elapsed * 2.6 + item.phase) * 0.25;
+          }
+        } else {
+          const inWater = gh < -18.2;
+          m.visible = inWater;
+          if (inWater) {
+            const drift = Math.sin(elapsed * 2.1 + item.phase) * 0.4;
+            m.position.y = waterY + 0.02;
+            m.scale.set(0.8 + Math.sin(elapsed * 3.0 + item.phase) * 0.25, 1, 0.7);
+            m.material.opacity = Math.max(0.08, 0.24 + drift * 0.18);
+          }
+        }
+      }
+    }
+
+    // --- Walkable Vines Between Floating Islands ---
+    function getVinePointAt(vine, t) {
+      const clampedT = THREE.MathUtils.clamp(t, 0, 1);
+      const x = THREE.MathUtils.lerp(vine.p0.x, vine.p1.x, clampedT);
+      const z = THREE.MathUtils.lerp(vine.p0.z, vine.p1.z, clampedT);
+      const baseY = THREE.MathUtils.lerp(vine.p0.y, vine.p1.y, clampedT);
+      const sagOffset = Math.sin(clampedT * Math.PI) * vine.sag;
+      return new THREE.Vector3(x, baseY - sagOffset, z);
+    }
+
+    function buildIslandVine(islA, islB, rng) {
+      const dir = new THREE.Vector3(islB.x - islA.x, 0, islB.z - islA.z);
+      const centerDist = dir.length();
+      if (centerDist < 1) return null;
+      dir.normalize();
+
+      const p0 = new THREE.Vector3(
+        islA.x + dir.x * (islA.deckR * 0.88),
+        islA.deckY + 0.15,
+        islA.z + dir.z * (islA.deckR * 0.88)
+      );
+      const p1 = new THREE.Vector3(
+        islB.x - dir.x * (islB.deckR * 0.88),
+        islB.deckY + 0.15,
+        islB.z - dir.z * (islB.deckR * 0.88)
+      );
+      const spanLen = p0.distanceTo(p1);
+      const sag = Math.min(14, spanLen * (0.11 + rng() * 0.06));
+      const vineInfo = { p0, p1, sag, spanLen, halfWidth: 0.75, islA, islB };
+
+      const group = new THREE.Group();
+      const segs = Math.max(12, Math.round(spanLen / 3.2));
+      for (let i = 0; i < segs; i++) {
+        const tA = i / segs;
+        const tB = (i + 1) / segs;
+        const a = getVinePointAt(vineInfo, tA);
+        const b = getVinePointAt(vineInfo, tB);
+        const mid = new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5);
+        const segVec = new THREE.Vector3().subVectors(b, a);
+        const segLen = segVec.length();
+
+        // Main thick twisted vine walkway
+        const branch = new THREE.Mesh(geoBox, matVine);
+        branch.scale.set(0.68, 0.34, segLen + 0.18);
+        branch.position.copy(mid);
+        branch.lookAt(b);
+        group.add(branch);
+
+        // Side tendril & small leaf clusters along the vine
+        if (i % 2 === 0) {
+          const leaf = new THREE.Mesh(geoCone, matLeaves);
+          const side = i % 4 === 0 ? 1 : -1;
+          leaf.scale.set(0.65, 1.1, 0.65);
+          leaf.position.set(mid.x + side * 0.42, mid.y - 0.12, mid.z);
+          leaf.rotation.set(0.4, rng() * Math.PI, side * 0.75);
+          group.add(leaf);
+        }
+      }
+
+      return { group, info: vineInfo };
+    }
+
+    // --- Ground Creatures (Grazing Deer & Scampering Foxes) ---
+    function buildGroundCritter(x, y, z, rng) {
+      const isDeer = rng() > 0.45;
+      const g = new THREE.Group();
+      g.position.set(x, y, z);
+
+      const coatMat = new THREE.MeshStandardMaterial({
+        color: isDeer ? 0xb07d4f : 0xd96b27,
+        roughness: 0.85,
+        flatShading: true
+      });
+      const bellyMat = new THREE.MeshStandardMaterial({
+        color: 0xf5ebe0,
+        roughness: 0.85,
+        flatShading: true
+      });
+
+      const body = new THREE.Mesh(geoBox, coatMat);
+      body.scale.set(isDeer ? 0.55 : 0.42, isDeer ? 0.58 : 0.36, isDeer ? 1.25 : 0.92);
+      body.position.y = isDeer ? 0.82 : 0.44;
+      g.add(body);
+
+      const head = new THREE.Mesh(geoBox, coatMat);
+      head.scale.set(isDeer ? 0.34 : 0.32, isDeer ? 0.36 : 0.28, isDeer ? 0.46 : 0.42);
+      head.position.set(0, isDeer ? 1.32 : 0.68, isDeer ? -0.62 : -0.5);
+      g.add(head);
+
+      if (isDeer) {
+        const neck = new THREE.Mesh(geoBox, coatMat);
+        neck.scale.set(0.28, 0.55, 0.3);
+        neck.position.set(0, 1.08, -0.48);
+        neck.rotation.x = 0.25;
+        g.add(neck);
+      } else {
+        const tail = new THREE.Mesh(geoCone, bellyMat);
+        tail.scale.set(0.24, 0.65, 0.24);
+        tail.position.set(0, 0.46, 0.65);
+        tail.rotation.x = Math.PI * 0.42;
+        g.add(tail);
+      }
+
+      const legs = [];
+      const legH = isDeer ? 0.62 : 0.32;
+      const legPositions = [
+        [-0.18, legH * 0.5, -0.38],
+        [0.18, legH * 0.5, -0.38],
+        [-0.18, legH * 0.5, 0.38],
+        [0.18, legH * 0.5, 0.38]
+      ];
+      for (const lp of legPositions) {
+        const leg = new THREE.Mesh(geoBox, coatMat);
+        leg.scale.set(0.12, legH, 0.12);
+        leg.position.set(lp[0], lp[1], lp[2]);
+        g.add(leg);
+        legs.push(leg);
+      }
+
+      return {
+        mesh: g,
+        legs,
+        isDeer,
+        yaw: rng() * Math.PI * 2,
+        speed: 0,
+        timer: 1 + rng() * 3,
+        phase: rng() * Math.PI * 2
+      };
+    }
+
+    function updateGroundCritters(dt) {
+      for (const cr of activeCritters) {
+        const dx = cr.mesh.position.x - player.pos.x;
+        const dz = cr.mesh.position.z - player.pos.z;
+        const distSq = dx * dx + dz * dz;
+        if (distSq > 260 * 260) continue;
+
+        const dist = Math.sqrt(distSq);
+        const playerLow = player.pos.y - cr.mesh.position.y < 18;
+
+        // Scatter away if the dove swoops or walks close
+        if (dist < 18 && playerLow) {
+          cr.yaw = Math.atan2(-dx, -dz);
+          cr.speed = cr.isDeer ? 8.5 : 9.5;
+          cr.timer = 1.6;
+        } else {
+          cr.timer -= dt;
+          if (cr.timer <= 0) {
+            if (cr.speed > 0.5) {
+              cr.speed = 0;
+              cr.timer = 1.8 + Math.random() * 3.5;
+            } else {
+              cr.yaw += (Math.random() - 0.5) * 2.4;
+              cr.speed = cr.isDeer ? 2.4 : 3.2;
+              cr.timer = 1.4 + Math.random() * 2.4;
+            }
+          }
+        }
+
+        if (cr.speed > 0.1) {
+          const nx = cr.mesh.position.x - Math.sin(cr.yaw) * cr.speed * dt;
+          const nz = cr.mesh.position.z - Math.cos(cr.yaw) * cr.speed * dt;
+          const ny = getGroundHeight(nx, nz);
+          if (ny > -16.5 && ny < 140 && getTerrainSlope(nx, nz) <= 0.32) {
+            cr.mesh.position.set(nx, ny, nz);
+          } else {
+            cr.yaw += Math.PI * 0.75;
+          }
+          cr.phase += dt * cr.speed * 3.2;
+          const swing = Math.sin(cr.phase) * 0.55;
+          cr.legs[0].rotation.x = swing;
+          cr.legs[1].rotation.x = -swing;
+          cr.legs[2].rotation.x = -swing;
+          cr.legs[3].rotation.x = swing;
+        } else {
+          for (const leg of cr.legs) leg.rotation.x = 0;
+        }
+
+        cr.mesh.rotation.y = cr.yaw;
+      }
     }
 
     // --- Ambient Soaring Bird Flocks ---
@@ -1634,6 +1980,8 @@
       const chunkIslands = [];
       const chunkRings = [];
       const chunkStorms = [];
+      const chunkVines = [];
+      const chunkCritters = [];
 
       const groundMesh = buildGroundTerrain(baseX, baseZ);
       chunkGroup.add(groundMesh);
@@ -1739,6 +2087,37 @@
         activeIslands.push(info);
       }
 
+      // Connect nearby floating islands with walkable suspension vines
+      for (let a = 0; a < chunkIslands.length; a++) {
+        for (let b = a + 1; b < chunkIslands.length; b++) {
+          const islA = chunkIslands[a];
+          const islB = chunkIslands[b];
+          const gap = Math.hypot(islA.x - islB.x, islA.z - islB.z) - (islA.deckR + islB.deckR);
+          if (gap > 6 && gap < 95 && Math.abs(islA.deckY - islB.deckY) < 26) {
+            const vineRes = buildIslandVine(islA, islB, rng);
+            if (vineRes) {
+              chunkGroup.add(vineRes.group);
+              chunkVines.push(vineRes.info);
+              activeVines.push(vineRes.info);
+            }
+          }
+        }
+      }
+
+      // Spawn grazing deer and scampering foxes on grassy ground
+      const critterCount = 2 + Math.floor(rng() * 3);
+      for (let c = 0; c < critterCount; c++) {
+        const cxPos = baseX + (rng() - 0.5) * CHUNK_SIZE * 0.82;
+        const czPos = baseZ + (rng() - 0.5) * CHUNK_SIZE * 0.82;
+        const cyPos = getGroundHeight(cxPos, czPos);
+        if (cyPos > -16 && cyPos < 135 && getTerrainSlope(cxPos, czPos) <= 0.28) {
+          const critter = buildGroundCritter(cxPos, cyPos, czPos, rng);
+          chunkGroup.add(critter.mesh);
+          chunkCritters.push(critter);
+          activeCritters.push(critter);
+        }
+      }
+
       // High cloud layers, storm zones & towering multi-layered cloud ecosystems above
       const cloudBio = getCloudDensity(baseX, baseZ);
       const isStormExpanse = cloudBio > 0.52;
@@ -1802,7 +2181,7 @@
       }
 
       scene.add(chunkGroup);
-      chunks.set(key, { group: chunkGroup, islands: chunkIslands, rings: chunkRings, storms: chunkStorms });
+      chunks.set(key, { group: chunkGroup, islands: chunkIslands, rings: chunkRings, storms: chunkStorms, vines: chunkVines, critters: chunkCritters });
     }
 
     function updateChunks() {
@@ -1833,6 +2212,18 @@
               if (idx !== -1) activeStorms.splice(idx, 1);
             }
           }
+          if (data.vines) {
+            for (const vn of data.vines) {
+              const idx = activeVines.indexOf(vn);
+              if (idx !== -1) activeVines.splice(idx, 1);
+            }
+          }
+          if (data.critters) {
+            for (const cr of data.critters) {
+              const idx = activeCritters.indexOf(cr);
+              if (idx !== -1) activeCritters.splice(idx, 1);
+            }
+          }
           chunks.delete(key);
         }
       }
@@ -1846,6 +2237,8 @@
       activeIslands.length = 0;
       activeRings.length = 0;
       activeStorms.length = 0;
+      activeVines.length = 0;
+      activeCritters.length = 0;
       worldSeed = newSeed;
       document.getElementById('seed-label').textContent = worldSeed;
       updateChunks();
@@ -1919,9 +2312,10 @@
       if (player.feetGroup) player.feetGroup.visible = standing;
     }
 
-    function setGroundedState(grounded, groundY, island = null, normal = null) {
+    function setGroundedState(grounded, groundY, island = null, normal = null, vine = null) {
       player.isGrounded = grounded;
       player.landedIsland = island;
+      player.landedVine = vine;
       if (normal) {
         player.groundNormal.copy(normal);
       } else {
@@ -1933,6 +2327,8 @@
         player.speed = 0;
         player.flapEnergy = 0;
         player.smoothFlapLift = 0;
+        player.diveMomentum = 0;
+        player.diveDropAltitude = 0;
         player.isBraking = false;
         player.isBoosting = false;
         player.isFallingDazed = false;
@@ -1955,6 +2351,7 @@
       if (player.isFallingDazed) return;
       player.isGrounded = false;
       player.landedIsland = null;
+      player.landedVine = null;
       player.isDazed = true;
       player.isFallingDazed = true;
       player.dazeTime = 0;
@@ -1962,6 +2359,8 @@
       player.isBoosting = false;
       player.flapEnergy = 0;
       player.smoothFlapLift = 0;
+      player.diveMomentum = 0;
+      player.diveDropAltitude = 0;
       player.speed = 0;
 
       if (bounceDir) {
@@ -2105,18 +2504,57 @@
 
         let supportY = null;
         let stillOnIsland = false;
-        if (player.landedIsland) {
-          const isl = player.landedIsland;
-          const dist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
-          if (dist <= isl.deckR + 0.35) {
-            supportY = isl.deckY;
-            player.groundNormal.set(0, 1, 0);
-            stillOnIsland = true;
-          } else {
-            player.landedIsland = null;
+        let stillOnVine = false;
+
+        // Check if walking along a suspended vine between islands
+        for (const vn of activeVines) {
+          const vx = vn.p1.x - vn.p0.x;
+          const vz = vn.p1.z - vn.p0.z;
+          const lenSq = vx * vx + vz * vz;
+          if (lenSq < 0.001) continue;
+          const rawT = ((player.pos.x - vn.p0.x) * vx + (player.pos.z - vn.p0.z) * vz) / lenSq;
+          if (rawT >= -0.04 && rawT <= 1.04) {
+            const pt = getVinePointAt(vn, rawT);
+            const lateralDist = Math.hypot(player.pos.x - pt.x, player.pos.z - pt.z);
+            if (lateralDist <= vn.halfWidth + 0.25 && Math.abs(player.pos.y - (pt.y + 0.19)) < 1.35) {
+              supportY = pt.y + 0.12;
+              player.landedVine = vn;
+              player.landedIsland = null;
+              player.groundNormal.set(0, 1, 0);
+              stillOnVine = true;
+              break;
+            }
           }
         }
-        if (!stillOnIsland && supportY === null) {
+
+        if (!stillOnVine) {
+          player.landedVine = null;
+          if (player.landedIsland) {
+            const isl = player.landedIsland;
+            const dist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
+            if (dist <= isl.deckR + 0.35) {
+              supportY = isl.deckY;
+              player.groundNormal.set(0, 1, 0);
+              stillOnIsland = true;
+            } else {
+              player.landedIsland = null;
+            }
+          }
+          if (!stillOnIsland) {
+            for (const isl of activeIslands) {
+              const dist = Math.hypot(player.pos.x - isl.x, player.pos.z - isl.z);
+              if (dist <= isl.deckR + 0.35 && Math.abs(player.pos.y - (isl.deckY + 0.19)) < 1.4) {
+                supportY = isl.deckY;
+                player.landedIsland = isl;
+                player.groundNormal.set(0, 1, 0);
+                stillOnIsland = true;
+                break;
+              }
+            }
+          }
+        }
+
+        if (!stillOnVine && !stillOnIsland && supportY === null) {
           const surf = getTerrainSurface(player.pos.x, player.pos.z);
           const groundY = Math.max(-18, surf.height);
           if (player.pos.y <= groundY + 1.8) {
@@ -2237,7 +2675,9 @@
 
         const curFwd = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quat);
         const spdRatio = THREE.MathUtils.clamp((player.speed - player.minSpeed) / 26, 0.12, 1);
-        const pitchScale = (player.smoothPitchInput > 0 && curFwd.y > 0.05 && player.flapEnergy < 0.25) ? spdRatio : 1;
+        const diveReserveRatio = THREE.MathUtils.clamp(player.diveDropAltitude / 35, 0, 1);
+        const pitchAuthority = Math.max(spdRatio, player.diveMomentum * 0.98, diveReserveRatio);
+        const pitchScale = (player.smoothPitchInput > 0 && curFwd.y > 0.05 && player.flapEnergy < 0.25) ? pitchAuthority : 1;
 
         const qRoll = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), rollDelta);
         const qPitch = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), player.smoothPitchInput * pitchRate * pitchScale * dt);
@@ -2262,6 +2702,7 @@
       const upVec = new THREE.Vector3(0, 1, 0).applyQuaternion(player.quat);
       const pitchFactor = -forwardDir.y;
       const effectiveMinSpeed = isBraking ? 4.5 : player.minSpeed;
+      const prevY = player.pos.y;
 
       if (player.flapEnergy > 0) {
         player.flapEnergy = Math.max(0, player.flapEnergy - dt * 0.72);
@@ -2274,10 +2715,17 @@
         player.speed = THREE.MathUtils.lerp(player.speed, boostTarget, dt * 4.2);
       } else {
         if (pitchFactor > 0.04) {
-          const diveTarget = Math.min(player.maxSpeed, 36 * speedMultiplier + pitchFactor * 34);
+          const diveTarget = Math.min(player.maxSpeed * 1.16, 36 * speedMultiplier + pitchFactor * 48);
           if (player.speed < diveTarget) {
-            player.speed = THREE.MathUtils.lerp(player.speed, diveTarget, dt * 2.4);
+            player.speed = THREE.MathUtils.lerp(player.speed, diveTarget, dt * 3.3);
           }
+          // Accumulate aerodynamic dive energy while diving
+          player.diveMomentum = Math.min(1.0, player.diveMomentum + pitchFactor * dt * 1.35);
+        } else {
+          // Hold dive momentum while stored altitude energy remains so pull-ups carry all the way back
+          const hasStoredDrop = player.diveDropAltitude > 1.5;
+          const decayRate = hasStoredDrop ? 0.08 : (forwardDir.y > 0.05 ? (0.34 + forwardDir.y * 0.42) : 0.28);
+          player.diveMomentum = Math.max(0, player.diveMomentum - dt * decayRate);
         }
         if (player.flapEnergy > 0.05) {
           const flapTarget = Math.min(player.maxSpeed, 34 * speedMultiplier + player.flapEnergy * 16);
@@ -2286,14 +2734,24 @@
           }
         }
         if (forwardDir.y > 0.05) {
-          player.speed = Math.max(effectiveMinSpeed, player.speed - forwardDir.y * 34 * dt);
+          // Dive energy cushions climb speed bleed until you recover your pre-dive altitude
+          const energyFactor = Math.max(player.diveMomentum, THREE.MathUtils.clamp(player.diveDropAltitude / 25, 0, 1));
+          const climbDrag = THREE.MathUtils.lerp(34, 8, energyFactor);
+          player.speed = Math.max(effectiveMinSpeed, player.speed - forwardDir.y * climbDrag * dt);
         }
         player.speed = Math.max(effectiveMinSpeed, player.speed - 0.14 * dt);
       }
 
+      if (isBraking) {
+        player.diveMomentum = Math.max(0, player.diveMomentum - dt * 1.8);
+        player.diveDropAltitude = Math.max(0, player.diveDropAltitude - dt * 28);
+      }
+
       if (!isAutoPilot && forwardDir.y > 0.03) {
         const speedNorm = THREE.MathUtils.clamp((player.speed - effectiveMinSpeed) / (player.maxSpeed - effectiveMinSpeed), 0, 1);
-        const stallRate = forwardDir.y * (0.9 + (1 - speedNorm) * 2.4);
+        const energyReserve = THREE.MathUtils.clamp(player.diveDropAltitude / 20, 0, 1);
+        const stallShield = Math.max(speedNorm, player.diveMomentum * 0.95, energyReserve);
+        const stallRate = forwardDir.y * (0.45 + (1 - stallShield) * 2.4);
         const worldRight = new THREE.Vector3().crossVectors(forwardDir, new THREE.Vector3(0, 1, 0));
         if (worldRight.lengthSq() > 0.0001) {
           worldRight.normalize();
@@ -2309,17 +2767,37 @@
 
       const uprightness = Math.max(0, upVec.y);
       const sideSink = (1 - uprightness) * -6.5;
-      const stallSink = (forwardDir.y > 0.1 && player.flapEnergy < 0.25) ? -forwardDir.y * 12.0 : 0;
+      const energyReserve = THREE.MathUtils.clamp(player.diveDropAltitude / 18, 0, 1);
+      const stallSink = (forwardDir.y > 0.1 && player.flapEnergy < 0.25 && player.diveMomentum < 0.2 && energyReserve < 0.2)
+        ? -forwardDir.y * 12.0 * (1 - Math.max(player.diveMomentum, energyReserve) * 5)
+        : 0;
       const baseGlideSink = isBraking ? -2.6 : -4.4;
       const flapLift = player.smoothFlapLift * 12.5 * (0.35 + 0.65 * uprightness);
-      player.pos.y += (baseGlideSink + sideSink + stallSink + flapLift) * dt;
+      // Convert stored dive drop altitude & momentum into strong upward recovery lift when pulling up
+      const pullUpFactor = THREE.MathUtils.clamp(forwardDir.y + 0.35, 0, 1.45);
+      const diveEnergy = Math.max(player.diveMomentum, THREE.MathUtils.clamp(player.diveDropAltitude / 28, 0, 1));
+      const diveSwoopLift = diveEnergy * pullUpFactor * 22.0 * uprightness;
+      player.pos.y += (baseGlideSink + sideSink + stallSink + flapLift + diveSwoopLift) * dt;
+
+      // Track potential energy: diving stores dropped height; pulling up spends it back until reaching original altitude
+      const deltaY = player.pos.y - prevY;
+      if (deltaY < 0 && pitchFactor > 0.12 && !isBraking) {
+        player.diveDropAltitude = Math.min(260, player.diveDropAltitude + (-deltaY) * 0.96);
+      } else if (deltaY > 0 && player.diveDropAltitude > 0) {
+        player.diveDropAltitude = Math.max(0, player.diveDropAltitude - deltaY);
+        if (player.diveDropAltitude <= 0.5) {
+          player.diveMomentum = Math.min(player.diveMomentum, 0.15);
+        }
+      } else if (Math.abs(pitchFactor) <= 0.12 && player.diveDropAltitude > 0) {
+        // Slowly bleed stored dive energy if leveling off without pulling up
+        player.diveDropAltitude = Math.max(0, player.diveDropAltitude - dt * 5.5);
+      }
 
       if (player.ledgeDropTimer > 0) {
         player.ledgeDropTimer = Math.max(0, player.ledgeDropTimer - dt);
-        player.pos.y -= 9.5 * dt;
       }
 
-      // 1) Floating island deck landing & cliff collision
+      // 1) Floating island deck landing & side-on cliff collision
       if (!isAutoPilot) {
         for (const isl of activeIslands) {
           const dx = player.pos.x - isl.x;
@@ -2327,11 +2805,10 @@
           const hDist = Math.hypot(dx, dz);
           const bottomY = isl.y - isl.underH - (isl.deckY - isl.y);
 
-          if (hDist < isl.deckR) {
+          if (hDist < isl.deckR + 0.4) {
             const distToDeck = player.pos.y - isl.deckY;
-            if (distToDeck <= 0.45 && distToDeck >= -1.8) {
+            if (distToDeck <= 0.42 && distToDeck >= -1.6) {
               if (upVec.y < 0.45) {
-                triggerDazedFall(new THREE.Vector3(0, 1, 0));
                 setGroundedState(true, isl.deckY, isl, new THREE.Vector3(0, 1, 0));
                 player.isDazed = true;
                 player.dazeTime = 0;
@@ -2352,6 +2829,30 @@
               player.pos.z = isl.z + outZ * (rockR + 0.4);
               triggerDazedFall(new THREE.Vector3(outX, 0.65, outZ).normalize());
               break;
+            }
+          }
+        }
+
+        // Landing directly onto a vine between floating islands
+        if (!player.isGrounded && !player.isFallingDazed) {
+          for (const vn of activeVines) {
+            const vx = vn.p1.x - vn.p0.x;
+            const vz = vn.p1.z - vn.p0.z;
+            const lenSq = vx * vx + vz * vz;
+            if (lenSq < 0.001) continue;
+            const rawT = ((player.pos.x - vn.p0.x) * vx + (player.pos.z - vn.p0.z) * vz) / lenSq;
+            if (rawT >= 0 && rawT <= 1) {
+              const pt = getVinePointAt(vn, rawT);
+              const lateralDist = Math.hypot(player.pos.x - pt.x, player.pos.z - pt.z);
+              const distToVine = player.pos.y - (pt.y + 0.12);
+              if (lateralDist <= vn.halfWidth + 0.35 && distToVine <= 0.5 && distToVine >= -1.1) {
+                setGroundedState(true, pt.y + 0.12, null, new THREE.Vector3(0, 1, 0), vn);
+                if (upVec.y < 0.45) {
+                  player.isDazed = true;
+                  player.dazeTime = 0;
+                }
+                break;
+              }
             }
           }
         }
@@ -2631,6 +3132,8 @@
         updatePlayer(dt);
         updateChunks();
         updateWindParticles();
+        updateWaterEffects(dt, elapsed);
+        updateGroundCritters(dt);
         updateAmbientFlocks(dt, elapsed);
         updateWeatherEffects(dt);
       } else {
@@ -2642,6 +3145,8 @@
         player.group.position.copy(player.pos);
         player.group.quaternion.copy(player.quat);
         updateChunks();
+        updateWaterEffects(dt, elapsed);
+        updateGroundCritters(dt);
         updateAmbientFlocks(dt, elapsed);
       }
 
@@ -2877,6 +3382,7 @@
       initSharedAssets();
       createPlayer();
       createWindParticles();
+      createWaterEffects();
       createAmbientFlocks();
       createWeatherEffects();
       applyTheme(0);
